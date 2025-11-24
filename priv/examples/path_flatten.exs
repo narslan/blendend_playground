@@ -6,25 +6,12 @@ alias Blendend.{Canvas, Style, Matrix2D, Draw, Path}
 
 defmodule BlendendPlayground.Demos.Hairy do
   # spacing: approx distance between samples along the path
-  def draw_hair(path, {canvas_w, canvas_h}, spacing \\ 3.0, opts \\ []) do
+  def draw_hair(path, spacing \\ 3.0, opts \\ []) do
     length = Keyword.get(opts, :length, 6.0)
     jitter = Keyword.get(opts, :jitter, 0.5)
     tuft_size = Keyword.get(opts, :tuft_size, 3)   # hairs per sample
     spread_deg = Keyword.get(opts, :spread_deg, 30.0)
-    flat_tol = Keyword.get(opts, :flat_tol, 0.5)
-
-    grad2 =
-      Blendend.Style.Gradient.linear_from_stops({0.0, canvas_h * 0.5, canvas_w * 1.0, canvas_h * 0.5},
-        [
-          {0.00, rgb(0xFF, 0x00, 0x00)}, # Red
-          {0.14, rgb(0xFF, 0x7F, 0x00)}, # Orange
-          {0.29, rgb(0xFF, 0xFF, 0x00)}, # Yellow
-          {0.43, rgb(0x80, 0xFF, 0x00)}, # Yellow-Green
-          {0.57, rgb(0x00, 0xFF, 0x00)}, # Green
-          {0.69, rgb(0x00, 0xFF, 0xFF)}, # Cyan
-          {0.80, rgb(0x00, 0x00, 0xFF)}, # Blue
-          {1.00, rgb(0xFF, 0x00, 0xFF)}  # Violet
-        ])
+    flat_tol = Keyword.get(opts, :flat_tol, 0.6)
 
     angle_spread = spread_deg * :math.pi() / 180.0
 
@@ -43,7 +30,7 @@ defmodule BlendendPlayground.Demos.Hairy do
              jitter *
                (:math.sin(idx * 0.42) * 0.6 + (:rand.uniform() - 0.5) * 0.3))
 
-      root_offset = (:rand.uniform() - 0.5) * (spacing * 0.6)
+      root_offset = (:rand.uniform() - 0.5) * (spacing * 0.3)
       bx = x + tx * root_offset
       by = y + ty * root_offset
 
@@ -65,8 +52,8 @@ defmodule BlendendPlayground.Demos.Hairy do
         hy = by + dir_y * len_i
 
         line bx, by, hx, hy,
-          stroke: grad2,
-          stroke_width: 0.9,
+          stroke: rgb(0x00,0x79, 0xf5),
+          stroke_width: 2.9,
           stroke_cap: :triangle
       end
     end)
@@ -78,10 +65,9 @@ end
 
 width = 1000
 height = 300
-canvas_size = {width, height}
 
 draw width, height do
-  clear(fill: rgb(0, 0, 0))
+  clear(fill: rgb(0x4c,0x48, 0x45))
   face = Face.load!("priv/fonts/Alegreya-Regular.otf")
   font = Font.create!(face, 80.0)
 
@@ -95,8 +81,7 @@ draw width, height do
   x0 = 60.0
   y0 = 240.0
 
-  # 1) draw the glyph run normally
-  # 2) build an outline path in the same coord system
+ 
   mtx =
     Matrix2D.identity!()
     |> Matrix2D.translate!(x0, y0)
@@ -107,16 +92,14 @@ draw width, height do
     Path.new!()
     |> Font.get_glyph_run_outlines!(font, run, mtx)
 
-  fill_path path, fill: rgb(255, 255, 255)
+  fill_path path, fill: rgb(0xed,0xe9, 0xe5)
 
    # overlay hairs
   BlendendPlayground.Demos.Hairy.draw_hair(path,
-    canvas_size,
-    2,
-    length: 3,
-    jitter: 3,
-    tuft_size: 4,
-    spread_deg: 65.0)
-
+    2.6,
+    length: 2.5,
+    jitter: 1,
+    tuft_size: 1,
+    spread_deg: 55.0)
 
 end
