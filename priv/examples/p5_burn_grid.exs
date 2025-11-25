@@ -77,18 +77,18 @@ noise = Demo.noise_overlay(w, h)
 draw w, h do
   # base background
   clear(fill: rgb(:rand.uniform(360) |> rem(360), 5, 95))
-
+   
   comp_op(:color_burn)
 
   canvas = Blendend.Draw.get_canvas()
   Blendend.Canvas.disable_stroke_style!(canvas)
 
-  layers = :rand.uniform(11) + 1
+  layers = :rand.uniform(4) + 1
 
   for _k <- 1..layers do
     offset = w / 18
     # 3..6 cells to keep shape count reasonable
-    cells = :rand.uniform(4) + 2
+    cells = :rand.uniform(12) + 1
     margin = 0
     d = (w - offset * 2 - margin * (cells - 1)) / cells
     
