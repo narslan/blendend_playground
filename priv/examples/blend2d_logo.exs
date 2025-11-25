@@ -2,7 +2,7 @@
 alias Blendend.Style.Gradient
 draw 600, 600 do
  
-grad = Gradient.radial_from_stops({90, 90, 90, 90, 90},
+grad = Gradient.radial_from_stops({90, 90, 90, 90, 90, 0},
   [{0.0, rgb(0xFF, 0xFF, 0xFF)},
   {1.0, rgb(0xFF, 0x6F, 0x3F)}])
   
