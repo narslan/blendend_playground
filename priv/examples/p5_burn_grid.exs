@@ -14,13 +14,18 @@ defmodule BlendendPlayground.Demos.P5BurnGrid do
     end)
   end
 
+
   def noise_overlay(w, h) do
     points =
-      for _ <- 1..round(w * h * 0.02),
-          do: {:rand.uniform() * w, :rand.uniform() * h}
+      for _ <- 1..round(w * h * 0.1) do
+        {:rand.uniform(w), :rand.uniform(h), :rand.uniform() * 3.0}
+      end
 
     fn ->
-      Enum.each(points, fn {x, y} ->
+      canvas = Blendend.Draw.get_canvas()
+
+      Enum.each(points, fn {x, y, weight} ->
+        Blendend.Canvas.set_stroke_width!(canvas, weight)
         line(x, y, x + 1, y + 1)
       end)
     end
@@ -37,21 +42,7 @@ defmodule BlendendPlayground.Demos.P5BurnGrid do
         {0.5, c2},
         {1.0, c3}
       ]
-    )
-  end
-
-  def shape_choice(d) do
-    r = :rand.uniform()
-
-    cond do
-      r > 0.5 ->
-        if :rand.uniform() > 0.5,
-          do: [{-d / 2, -d / 2}, {0, -d / 2}, {d / 2, d / 2}, {0, d / 2}],
-          else: [{d / 2, -d / 2}, {0, -d / 2}, {-d / 2, d / 2}, {0, d / 2}]
-
-      true ->
-        [{-d / 2, -d / 2}, {d / 2, -d / 2}, {d / 2, d / 2}]
-    end
+    ) 
   end
 
   def to_path(points) do
@@ -76,25 +67,20 @@ noise = Demo.noise_overlay(w, h)
 
 draw w, h do
   # base background
-  clear(fill: rgb(:rand.uniform(360) |> rem(360), 5, 95))
-   
-  comp_op(:color_burn)
+  clear(fill: hsv(:rand.uniform(360), 0.05, 0.95))
 
+  comp_op(:color_burn)
   canvas = Blendend.Draw.get_canvas()
   Blendend.Canvas.disable_stroke_style!(canvas)
 
-  layers = :rand.uniform(4) + 1
+  layers = 5
 
   for _k <- 1..layers do
-    offset = w / 18
-    # 3..6 cells to keep shape count reasonable
-    cells = :rand.uniform(12) + 1
+    offset = w / 15
+    cells = :rand.uniform(10) + 1
     margin = 0
     d = (w - offset * 2 - margin * (cells - 1)) / cells
-    
-    grad = Demo.radial_gradient_fill( -d / 2, -d/2, 0,  -d/2, -d/2,   d*2, palette )
-    
-    Blendend.Canvas.set_fill_style!(canvas, grad)
+
     for j <- 0..(cells - 1), i <- 0..(cells - 1) do
       x = offset + i * (d + margin)
       y = offset + j * (d + margin)
@@ -102,31 +88,27 @@ draw w, h do
       translate x + d / 2, y + d / 2 do
         rotate(:rand.uniform(4) * :math.pi() / 2)
 
-        # pick three palette colors (cycle through to avoid dominance)
-        idx = rem(i + j * cells, length(palette))
-        c1 = Enum.at(palette, idx)
-        c2 = Enum.at(palette, rem(idx + 1, length(palette)))
-        c3 = Enum.at(palette, rem(idx + 2, length(palette)))
+        if :rand.uniform(100) > 33 do
+          [c1, c2, c3] = Enum.take_random(palette, 3)
+          grad = Demo.radial_gradient_fill(-d / 2, -d / 2, 0, -d / 2, -d / 2, d * 2, [c1, c2, c3])
+          Blendend.Canvas.set_fill_style!(canvas, grad)
 
-        
+          shape =
+            cond do
+              :rand.uniform(100) > 50 and :rand.uniform(100) > 50 ->
+                [{-d / 2, -d / 2}, {0, -d / 2}, {d / 2, d / 2}, {0, d / 2}]
 
-        # shadow via blur_path on the polygon outline (skip most for perf)
-        case Demo.shape_choice(d) do
-          [] ->
-            :ok
+              :rand.uniform(100) > 50 ->
+                [{d / 2, -d / 2}, {0, -d / 2}, {-d / 2, d / 2}, {0, d / 2}]
 
-          pts ->
-            if :rand.uniform() > 0.7 do
-              path = Demo.to_path(pts)
-
-              blur_path(path, w / 120,
-                mode: :fill,
-                fill: Enum.random(palette),
-                padding: d / 6
-              )
+              true ->
+                [{-d / 2, -d / 2}, {d / 2, -d / 2}, {d / 2, d / 2}]
             end
 
-            polygon pts
+          path = Demo.to_path(shape)
+
+          shadow_path(path, 0.0, 0.0, w / 40.0, fill: Enum.random(palette))
+          polygon shape
         end
       end
     end
