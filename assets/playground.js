@@ -6,24 +6,29 @@ import { elixir } from "codemirror-lang-elixir";
 
 const state = {
   code: `
+  
   # Welcome to the Blendend playground.
   # Pick an example to load it, tweak
   # and see the preview update.
   # Save as a new file with "Filename" + "New"; 
   # To the edit the current file use "Update".
   draw 800, 800 do
-    clear(fill: rgb(20, 24, 32))
 
+    [c1, c2 , c3, c4, c5] = scheme(:vangogh)
+    
     grad =
-      Blendend.Style.Gradient.linear_from_stops({40, 40, 360, 360}, [
-        {0.0, rgb(80, 140, 255)},
-        {1.0, rgb(180, 110, 255)}
+      Blendend.Style.Gradient.linear_from_stops({150, 150, 360, 360}, [
+        {0.0, c1},
+        {0.25,c2},
+        {0.5,c3},
+        {0.75,c4},      
+        {1.0, c5}
       ])
-
+    translate 200, 200
     round_rect 40, 40, 420, 320, 28, 28, fill: grad
 
     font = load_font "priv/fonts/Alegreya-Regular.otf", 48.0
-    text font, 80, 215, "Hello, blendend!", fill: rgb(245, 245, 245)
+    text font, 80, 215, "Hello, blendend!", fill: rgb(40, 40, 40)
   end
   `,
   image: "",
