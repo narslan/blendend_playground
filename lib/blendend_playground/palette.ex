@@ -3,10 +3,13 @@ defmodule BlendendPlayground.Palette do
   Small color palette helper for examples and demos.
 
   Provides named palettes, random picks, shuffling, and conversion to
-  `Blendend.Style.Color` resources so you can keep example code readable.
+  `Blendend.Style.Color` resources.
   """
-
   alias Blendend.Style.Color
+  # @enforce_keys [:name, :colors]
+
+  # defstruct [:name, :colors, :stroke, :background]
+
   # Palette set adapted from takawo (https://openprocessing.org/user/6533) —
   # used here to ease multicolor experimentation.
   @scheme_palette %{
@@ -22,7 +25,17 @@ defmodule BlendendPlayground.Palette do
     nizami: ["#034AA6", "#72B6F2", "#73BFB1", "#F2A30F", "#F26F63"],
     renoir: ["#303E8C", "#F2AE2E", "#F28705", "#D91414", "#F2F2F2"],
     vangogh: ["#424D8C", "#84A9BF", "#C1D9CE", "#F2B705", "#F25C05"],
-    mono: ["#D9D7D8", "#3B5159", "#5D848C", "#7CA2A6", "#262321"]
+    mono: ["#D9D7D8", "#3B5159", "#5D848C", "#7CA2A6", "#262321"],
+    tsu_arcade: [
+      "#251c12",
+      "#cfc7b9",
+      "#4aad8b",
+      "#e15147",
+      "#f3b551",
+      "#cec8b8",
+      "#d1af84",
+      "#544e47"
+    ]
   }
 
   @doc """
