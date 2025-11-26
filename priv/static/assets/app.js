@@ -18,9 +18,10 @@ ${c}end`,p=l.from+u.length;return{range:X.cursor(p),changes:[{from:l.from,to:l.t
   # and see the preview update.
   # Save as a new file with "Filename" + "New"; 
   # To the edit the current file use "Update".
+  alias BlendendPlayground.Palette
   draw 800, 800 do
 
-    [c1, c2 , c3, c4, c5] = scheme(:vangogh)
+    [c1, c2 , c3, c4, c5] = Palette.scheme(:vangogh)
     
     grad =
       Blendend.Style.Gradient.linear_from_stops({150, 150, 360, 360}, [
