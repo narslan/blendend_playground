@@ -121,8 +121,8 @@ defmodule Steps do
                 4 ->
                   triangle(-wn / 2, -hn / 2, -wn / 2, hn / 2, wn / 2, -hn / 2)
 
-                #5 ->
-                #  polygon({0, 0, max(wn, hn), Enum.random([3, 4, 6])})
+                  # 5 ->
+                  #  polygon({0, 0, max(wn, hn), Enum.random([3, 4, 6])})
               end
           end
         end
@@ -133,7 +133,7 @@ defmodule Steps do
   end
 
   def draw_layer(w, offset, size, palette, shapes) do
-    clear(fill: rgb(0,0,0,0))
+    # clear(fill: rgb(0,0,0,0))
 
     layer_cells(w, offset, size)
     |> Enum.each(fn {x, y, x_step, y_step} ->
@@ -153,11 +153,12 @@ height = 600
 
 draw width, height do
   palette = Palette.scheme(:vangogh)
-  # w = sqrt(sq(width) + sq(height))
+  size = 5
   offset = width / 5
   layers = 5
   background_alpha = 9
-  alpha = map(layers, 1, 8, background_alpha, 5)
+  # alpha = map(layers, 1, 8, background_alpha, 5)
+  alpha = 1
   w = sqrt(sq(width) + sq(height))
   c1 = Enum.at(palette, 0)
 
@@ -165,12 +166,12 @@ draw width, height do
   clear(fill: hsv(0, 0, 0.95))
   global_alpha(alpha)
   comp_op(:color_burn)
-  clear(fill: c1)
+  # clear(fill: c1)
 
   translate width / 2, height / 2 do
     rotate(angle)
     translate(-w / 2, -w / 2)
     comp_op(:src_over)
-    Steps.build_layers(5, w, offset, 5, palette, 4)
+    Steps.build_layers(layers, w, offset, size, palette, 4)
   end
 end
