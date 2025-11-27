@@ -36,4 +36,16 @@ defmodule BlendendPlayground.Calculation do
   def lerp(start, stop, amt) do
     start + (stop - start) * amt
   end
+
+  @doc """
+  Squares a number.
+  """
+  @spec sq(number()) :: number()
+  def sq(value), do: value * value
+
+  @doc """
+  Square root helper (delegates to :math.sqrt).
+  """
+  @spec sqrt(number()) :: float()
+  def sqrt(value), do: :math.sqrt(value)
 end
