@@ -12,6 +12,7 @@ defmodule BlendendPlayground.Palette do
 
   # Palette set adapted from takawo (https://openprocessing.org/user/6533) —
   # used here to ease multicolor experimentation.
+  # and from https://github.com/kgolid/chromotome/tree/master/palettes
   @scheme_palette %{
     benedictus: ["#F27EA9", "#366CD9", "#5EADF2", "#636E73", "#F2E6D8"],
     cross: ["#D962AF", "#58A6A6", "#8AA66F", "#F29F05", "#F26D6D"],

@@ -48,4 +48,12 @@ defmodule BlendendPlayground.Calculation do
   """
   @spec sqrt(number()) :: float()
   def sqrt(value), do: :math.sqrt(value)
+
+  @doc """
+  Generates a random angle in radians between -π and +π.
+  """
+  @spec rand_radian() :: float()
+  def rand_radian do
+    (:rand.uniform() * 2 - 1) * :math.pi()
+  end
 end

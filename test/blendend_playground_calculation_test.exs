@@ -21,6 +21,15 @@ defmodule BlendendPlayground.CalculationTest do
     assert_in_delta Calculation.sqrt(9), 3.0, 1.0e-10
   end
 
+  test "rand_radian spans -pi..pi" do
+    :rand.seed(:exsplus, {1, 2, 3})
+    expected = (:rand.uniform() * 2 - 1) * :math.pi()
+    :rand.seed(:exsplus, {1, 2, 3})
+
+    assert_in_delta Calculation.rand_radian(), expected, 1.0e-12
+    assert expected >= -:math.pi() and expected <= :math.pi()
+  end
+
   test "macros delegate to the functional api" do
     require BlendendPlayground.Calculation.Macros
 
@@ -29,6 +38,10 @@ defmodule BlendendPlayground.CalculationTest do
     assert BlendendPlayground.Calculation.Macros.map(5, 0, 5, 10, 20) == 20.0
     assert BlendendPlayground.Calculation.Macros.sq(4) == 16
     assert_in_delta BlendendPlayground.Calculation.Macros.sqrt(16), 4.0, 1.0e-10
+    :rand.seed(:exsplus, {1, 2, 3})
+    expected = (:rand.uniform() * 2 - 1) * :math.pi()
+    :rand.seed(:exsplus, {1, 2, 3})
+    assert_in_delta BlendendPlayground.Calculation.Macros.rand_radian(), expected, 1.0e-12
   end
 
   test "map rejects zero-length input ranges" do

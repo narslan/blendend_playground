@@ -47,4 +47,10 @@ defmodule BlendendPlayground.Calculation.Macros do
       Calculation.sqrt(value)
     end
   end
+
+  defmacro rand_radian do
+    quote do
+      Calculation.rand_radian()
+    end
+  end
 end
