@@ -56,4 +56,19 @@ defmodule BlendendPlayground.Calculation do
   def rand_radian do
     (:rand.uniform() * 2 - 1) * :math.pi()
   end
+
+  @doc """
+  Picks a random float between `min` and `max` (inclusive of `min`, exclusive of `max`).
+
+  Swaps the arguments if they are provided in reverse order.
+  """
+  @spec rand_between(number(), number()) :: float()
+  def rand_between(min, max) do
+    {low, high} = if min <= max, do: {min, max}, else: {max, min}
+
+    case high - low do
+      0 -> low * 1.0
+      span -> low + :rand.uniform() * span
+    end
+  end
 end

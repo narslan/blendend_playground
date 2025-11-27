@@ -99,6 +99,16 @@ defmodule BlendendPlayground.Palette do
   @spec scheme_names() :: [atom()]
   def scheme_names, do: Map.keys(@scheme_palette)
 
+  @doc """
+  Converts a list of `#RRGGBB` hex strings into `Blendend.Style.Color` structs.
+
+  Useful for palettes built from literal hex values.
+  """
+  @spec from_hex_list([String.t()]) :: [Color.t()]
+  def from_hex_list(hex_list) when is_list(hex_list) do
+    Enum.map(hex_list, &hex_to_color/1)
+  end
+
   defp random_scheme_key, do: Enum.random(Map.keys(@scheme_palette))
 
   defp hex_to_color("#" <> <<r::binary-size(2), g::binary-size(2), b::binary-size(2)>>) do

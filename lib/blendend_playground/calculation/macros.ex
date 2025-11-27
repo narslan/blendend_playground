@@ -53,4 +53,10 @@ defmodule BlendendPlayground.Calculation.Macros do
       Calculation.rand_radian()
     end
   end
+
+  defmacro rand_between(min, max) do
+    quote bind_quoted: [min: min, max: max] do
+      Calculation.rand_between(min, max)
+    end
+  end
 end
