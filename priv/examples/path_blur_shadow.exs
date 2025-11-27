@@ -11,16 +11,16 @@ draw 720, 420 do
 
   star =
     Path.new!()
-    |> Path.move_to!(460.0, 110.0)
-    |> Path.line_to!(500.0, 190.0)
-    |> Path.line_to!(585.0, 200.0)
-    |> Path.line_to!(515.0, 250.0)
-    |> Path.line_to!(535.0, 330.0)
-    |> Path.line_to!(460.0, 285.0)
-    |> Path.line_to!(385.0, 330.0)
-    |> Path.line_to!(405.0, 250.0)
-    |> Path.line_to!(335.0, 200.0)
-    |> Path.line_to!(420.0, 190.0)
+    |> Path.move_to!(460, 110)
+    |> Path.line_to!(500, 190)
+    |> Path.line_to!(585, 200)
+    |> Path.line_to!(515, 250)
+    |> Path.line_to!(535, 330)
+    |> Path.line_to!(460, 285)
+    |> Path.line_to!(385, 330)
+    |> Path.line_to!(405, 250)
+    |> Path.line_to!(335, 200)
+    |> Path.line_to!(420, 190)
     |> Path.close!()
 
   # Soft shadow and glow on the ring

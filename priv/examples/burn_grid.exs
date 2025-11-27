@@ -71,7 +71,7 @@ draw w, h do
 
   comp_op(:color_burn)
   canvas = Blendend.Draw.get_canvas()
-  Blendend.Canvas.disable_stroke_style!(canvas)
+  disable_style(:stroke)
 
   layers = 5
 

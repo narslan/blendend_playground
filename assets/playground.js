@@ -2,6 +2,12 @@ import { EditorState } from "@codemirror/state";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { EditorView, basicSetup } from "codemirror";
 import { elixir } from "codemirror-lang-elixir";
+// font sizing follows the CSS variable so media queries can shrink it on wide displays
+const editorFontTheme = EditorView.theme({
+  ".cm-editor": { fontSize: "var(--editor-font-size)" },
+  ".cm-content": { fontSize: "var(--editor-font-size)" },
+  ".cm-line": { fontSize: "var(--editor-font-size)" },
+});
 // ----- local state -----
 
 const state = {
@@ -38,6 +44,7 @@ const state = {
   filename: "",
   selectedExample: "",
   view: null,
+  fontSize: null,
 
   previewTimeout: null,
   renderId: 0,
@@ -49,6 +56,7 @@ const dom = {
   editorHost: null,
   renderButton: null,
   examplesSelect: null,
+  fontSizeSelect: null,
   filenameInput: null,
   saveButton: null,
   updateButton: null,
@@ -67,6 +75,7 @@ function initPlayground() {
 
   cacheDomRefs();
   attachHandlers();
+  hydrateFontSize();
   initCodeMirror();
   loadExamples();
   renderBusy();
@@ -89,6 +98,16 @@ function playgroundMarkup() {
             <label>Examples</label>
             <select data-role="examples-select">
               <option value="">— Select —</option>
+            </select>
+          </div>
+
+          <div class="toolbar-group">
+            <label>Font size</label>
+            <select data-role="font-size-select">
+              <option value="9px">9px</option>
+              <option value="10px">10px</option>
+              <option value="11px">11px</option>
+              <option value="12px">12px</option>
             </select>
           </div>
 
@@ -162,6 +181,7 @@ function cacheDomRefs() {
   const root = dom.root;
   dom.editorHost = root.querySelector("#editor");
   dom.examplesSelect = root.querySelector('[data-role="examples-select"]');
+  dom.fontSizeSelect = root.querySelector('[data-role="font-size-select"]');
   dom.filenameInput = root.querySelector('[data-role="filename-input"]');
   dom.saveButton = root.querySelector('[data-action="save"]');
   dom.updateButton = root.querySelector('[data-action="update"]');
@@ -212,6 +232,36 @@ function attachHandlers() {
     e.preventDefault();
     updateExample();
   });
+
+  dom.fontSizeSelect.addEventListener("change", (e) => {
+    const size = e.target.value;
+    state.fontSize = size;
+    applyFontSize();
+  });
+}
+
+function hydrateFontSize() {
+  if (!dom.fontSizeSelect) return;
+  const computed = getComputedStyle(document.documentElement).getPropertyValue(
+    "--editor-font-size",
+  );
+  const clean = (computed || "").trim() || "11px";
+  state.fontSize = clean;
+  dom.fontSizeSelect.value = clean;
+  applyFontSize();
+}
+
+function applyFontSize() {
+  if (!state.fontSize) return;
+  document.documentElement.style.setProperty(
+    "--editor-font-size",
+    state.fontSize,
+  );
+
+  // force inline on the editor root to win against any injected defaults
+  if (state.view && state.view.dom) {
+    state.view.dom.style.fontSize = state.fontSize;
+  }
 }
 
 // ----- CodeMirror -----
@@ -219,7 +269,7 @@ function attachHandlers() {
 function initCodeMirror() {
   if (!dom.editorHost || state.view) return;
 
- 
+
   state.view = new EditorView({
     state: EditorState.create({
       doc: state.code,
@@ -227,6 +277,7 @@ function initCodeMirror() {
         basicSetup,
         elixir(),
          oneDark,
+        editorFontTheme,
         EditorView.updateListener.of((update) => {
           if (update.docChanged) {
             state.code = update.state.doc.toString();
@@ -237,6 +288,8 @@ function initCodeMirror() {
     }),
     parent: dom.editorHost,
   });
+
+  applyFontSize(); // ensure the view picks up the current selection immediately
 }
 
 function syncEditorToCode() {
