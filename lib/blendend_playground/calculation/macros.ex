@@ -59,4 +59,29 @@ defmodule BlendendPlayground.Calculation.Macros do
       Calculation.rand_between(min, max)
     end
   end
+
+  # trig helpers (radian input)
+  defmacro sin(angle) do
+    quote do
+      :math.sin(unquote(angle))
+    end
+  end
+
+  defmacro cos(angle) do
+    quote do
+      :math.cos(unquote(angle))
+    end
+  end
+
+  defmacro tan(angle) do
+    quote do
+      :math.tan(unquote(angle))
+    end
+  end
+
+  defmacro atan2(y, x) do
+    quote do
+      :math.atan2(unquote(y), unquote(x))
+    end
+  end
 end

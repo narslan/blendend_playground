@@ -41,4 +41,3 @@ draw 800, 800 do
       y + line_height
     end)
 end
-
