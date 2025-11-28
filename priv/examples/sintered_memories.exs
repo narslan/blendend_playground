@@ -4,7 +4,6 @@ alias BlendendPlayground.Palette
 use BlendendPlayground.Calculation.Macros
 
 defmodule Steps do
-  # set_step as before; capture `size` when you call build_layers/…
   def set_step(v, max, size) do
     #scl = (size - 1.0) / (5.0 - 1.0) * (1.0 - 5.0) + 5.0
     scl = map(size, 1, 5, 5, 1)
@@ -78,11 +77,11 @@ defmodule Steps do
           Blendend.Style.Gradient.add_stop!(grad, :rand.uniform(), rgb(0, 0, 100, 0))
           
           if :rand.uniform() > 0.5 do
-            set_style_alpha(:stroke, 0.5)
+            set_style_alpha(:stroke, 1)
             set_stroke_style(grad)
-            disable_style(:fill)
+            disable_style(:fill) 
           else
-            set_style_alpha(:fill, 0.5)
+            set_style_alpha(:fill, 1)
             set_fill_style(grad)
             disable_style(:stroke)
           end
@@ -145,7 +144,7 @@ defmodule Steps do
 
   def build_layers(layers, w, offset, size, palette, shapes) do
     for _ <- 1..layers do
-      clear(fill: rgb(0, 0, 0, 0))
+      #clear(fill: rgb(0, 0, 0, 0))
       draw_layer(w, offset, size, palette, shapes)
     end
   end
@@ -156,7 +155,7 @@ height = 600
 
 draw width, height do
   palette = Palette.scheme(:mem5)
-  size = 4
+  size = 2  
   offset = width / 5
   layers = 3
   
