@@ -46,7 +46,7 @@ defmodule BlendendPlayground.Demos.NightHouse do
 
       fill_path(p)
 
-      shadow_path(p, 0.0, 0, w / 3, fill: rgb(0, 0, 0, 33), resolution: 0.2)
+      shadow_path(p, 0.0, 0, w / 3, fill: rgb(0, 0, 0, 33), resolution: 0.1)
 
       # roof
       {ch, cs, cv} = Enum.at(palette, 0)
@@ -162,14 +162,42 @@ draw width, height do
 
   clear(fill: gradient)
 
-  for _ <- 0..div(width * height, 100) do
-    x = Enum.random(1..width)
+  # Star field: sample positions uniformly, then keep/brighten them based on
+  # Perlin noise so stars clump in brighter patches.
+  star_seed = :rand.uniform() * 1000.0
+  # Sample noise on a coarse grid and spawn stars per cell (much cheaper).
+  cell = 32
+  max_y = height * 0.55
+  noise_scale = 0.015
 
-    y =
-      :rand.uniform() * :rand.uniform() * :rand.uniform() * :rand.uniform() * height * 1.5 -
-        height * 0.15
+  for gx <- 0..div(width, cell),
+      gy <- 0..div(trunc(max_y), cell) do
+    cx = gx * cell + cell / 2
+    cy = gy * cell + cell / 2
 
-    circle(x, y, 0.5, stroke: rgb(255, 255, 255, Enum.random(100..255)))
+    # Fade out toward horizon to reduce stars near the bottom.
+    horizon_falloff = map(cy, 0, max_y, 1.0, 0.15)
+
+    n =
+      Perlin.noise(cx * noise_scale, cy * noise_scale, star_seed)
+      |> then(&((&1 + 1.0) / 2.0 * horizon_falloff))
+
+    # Decide how many stars to place in this cell based on noise.
+    stars_here =
+      cond do
+        n > 0.75 -> 1
+        n > 0.6 -> 1
+        
+        true -> 0
+      end
+
+    for _ <- 1..stars_here do
+      x = gx * cell + :rand.uniform() * cell
+      y = gy * cell + :rand.uniform() * cell
+      alpha = trunc(80 + n * 170) |> min(255)
+      radius = 0.6 + n * 1.2
+      circle(x, y, radius, fill: rgb(255, 255, 255, alpha))
+    end
   end
 
   w = height / 10 / 1.5
