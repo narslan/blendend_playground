@@ -2,7 +2,7 @@
 # Exercises blend modes (burn), gradients, and soft blur shadows.
 use Blendend.Draw
 
-defmodule BlendendPlayground.Demos.P5BurnGrid do
+defmodule BlendendPlayground.Demos.BurnGrid do
   def parse_palette() do
     url = "ffcd38-f2816a-71dcdd-2d557f-f7ede2"
 
@@ -61,7 +61,7 @@ end
 
 w = 800
 h = 800
-alias BlendendPlayground.Demos.P5BurnGrid, as: Demo
+alias BlendendPlayground.Demos.BurnGrid, as: Demo
 palette = Demo.parse_palette()
 noise = Demo.noise_overlay(w, h)
 

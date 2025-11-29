@@ -26,6 +26,7 @@ defmodule BlendendPlayground.Palette do
     nizami: ["#034AA6", "#72B6F2", "#73BFB1", "#F2A30F", "#F26F63"],
     renoir: ["#303E8C", "#F2AE2E", "#F28705", "#D91414", "#F2F2F2"],
     vangogh: ["#424D8C", "#84A9BF", "#C1D9CE", "#F2B705", "#F25C05"],
+    # vangogh_2: ["#424D8C", "#84A9BF", "#C1D9CE", "#F2B705", "#F25C05"],
     mono: ["#D9D7D8", "#3B5159", "#5D848C", "#7CA2A6", "#262321"],
     tsu_arcade: [
       "#251c12",
@@ -109,6 +110,43 @@ defmodule BlendendPlayground.Palette do
     Enum.map(hex_list, &hex_to_color/1)
   end
 
+  @doc """
+  Returns a list of HSV triples `{h, s, v}` for a named scheme.
+
+  Hue is in degrees `0..360`, saturation/value are `0.0..1.0`.
+  """
+  @spec scheme_hsv(atom()) :: [{number(), number(), number()}]
+  def scheme_hsv(name) when is_atom(name) do
+    key =
+      case name do
+        :random -> random_scheme_key()
+        atom -> atom
+      end
+
+    palette =
+      Map.fetch(@scheme_palette, key)
+      |> case do
+        {:ok, list} -> list
+        :error -> Map.fetch!(@scheme_palette, random_scheme_key())
+      end
+
+    Enum.map(palette, &hex_to_hsv/1)
+  end
+
+  @spec scheme_hsv(term()) :: no_return()
+  def scheme_hsv(name) do
+    raise ArgumentError,
+          "scheme_hsv/1 expects an atom scheme name such as :hokusai or :random, got: #{inspect(name)}"
+  end
+
+  @doc """
+  Converts a list of `#RRGGBB` hex strings into HSV triples `{h, s, v}`.
+  """
+  @spec from_hex_list_hsv([String.t()]) :: [{number(), number(), number()}]
+  def from_hex_list_hsv(hex_list) when is_list(hex_list) do
+    Enum.map(hex_list, &hex_to_hsv/1)
+  end
+
   defp random_scheme_key, do: Enum.random(Map.keys(@scheme_palette))
 
   defp hex_to_color("#" <> <<r::binary-size(2), g::binary-size(2), b::binary-size(2)>>) do
@@ -118,4 +156,31 @@ defmodule BlendendPlayground.Palette do
       String.to_integer(b, 16)
     )
   end
+
+  defp hex_to_hsv("#" <> <<r::binary-size(2), g::binary-size(2), b::binary-size(2)>>) do
+    r = String.to_integer(r, 16) / 255.0
+    g = String.to_integer(g, 16) / 255.0
+    b = String.to_integer(b, 16) / 255.0
+
+    maxc = max(r, max(g, b))
+    minc = min(r, min(g, b))
+    delta = maxc - minc
+
+    h =
+      cond do
+        delta == 0.0 -> 0.0
+        maxc == r -> 60.0 * :math.fmod(((g - b) / delta), 6.0)
+        maxc == g -> 60.0 * (((b - r) / delta) + 2.0)
+        true -> 60.0 * (((r - g) / delta) + 4.0)
+      end
+      |> normalize_hue()
+
+    s = if maxc == 0.0, do: 0.0, else: delta / maxc
+    v = maxc
+
+    {h, s, v}
+  end
+
+  defp normalize_hue(h) when h < 0.0, do: h + 360.0
+  defp normalize_hue(h), do: h
 end
