@@ -54,8 +54,9 @@ defmodule BlendendPlayground.Demos.FloralWave do
             do: {:halt, idx}, 
             else: {:cont, petal_ring(r, r_max, colors, idx)}
         end)
-      
+      #most inner circle
       circle(0.0, 0.0, r_max / 5, fill: base)
+      circle(0.0, 0.0, r_max / 5, stroke: rgb(0,0,0,200))
     end
   end
 
