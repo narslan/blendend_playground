@@ -34,16 +34,14 @@ defmodule BlendendPlayground.Demos.NightHouse do
       # fascia
       set_fill_style(hsv(0, 0, 1))
 
-      p =
-        Path.new!()
-        |> Path.move_to!(0, w2)
-        |> Path.line_to!(w / 4, 0)
-        |> Path.line_to!(w * 3 / 4, 0)
-        |> Path.line_to!(w, w2)
-        |> Path.line_to!(w, h)
-        |> Path.line_to!(0, h)
-        |> Path.close!()
-
+      p = path do
+        move_to 0, w/2
+        line_to w * 3/ 4,0
+        line_to w, w/2
+        line_to w,h
+        line_to 0,h
+      end
+        
       fill_path(p)
 
       shadow_path(p, 0.0, 0, w / 3, fill: rgb(0, 0, 0, 33), resolution: 0.1)
@@ -60,13 +58,13 @@ defmodule BlendendPlayground.Demos.NightHouse do
           ]
         )
 
-      p2 =
-        Path.new!()
-        |> Path.move_to!(w / 4, 0)
-        |> Path.line_to!(w * 3 / 4, 0)
-        |> Path.line_to!(w, w2)
-        |> Path.line_to!(w / 2, w2)
-        |> Path.close!()
+      p2 = path do
+        move_to w/4, 0
+        line_to w * 3/ 4,0
+        line_to w, w2
+        line_to w / 2, w2
+      end
+         
 
       fill_path(p2, fill: grad2)
 
@@ -82,13 +80,13 @@ defmodule BlendendPlayground.Demos.NightHouse do
           ]
         )
 
-      p3 =
-        Path.new!()
-        |> Path.move_to!(w / 2, w2)
-        |> Path.line_to!(w, w2)
-        |> Path.line_to!(w, h)
-        |> Path.line_to!(w / 2, h)
-        |> Path.close!()
+       p3 = path do
+        move_to w/2, w2
+        line_to w, w2
+        line_to w, h
+        line_to w / 2, h
+      end
+         
 
       fill_path(p3, fill: grad3)
 
@@ -103,17 +101,15 @@ defmodule BlendendPlayground.Demos.NightHouse do
           [
             {0.0, hsv(c3)},
             {1 / 15, hsv(c4)}
-          ]
-        )
+          ] )
 
-      p4 =
-        Path.new!()
-        |> Path.move_to!(0, w2)
-        |> Path.line_to!(w / 4, 0)
-        |> Path.line_to!(w / 2, w2)
-        |> Path.line_to!(w / 2, h)
-        |> Path.line_to!(0, h)
-        |> Path.close!()
+      p4 = path do
+        move_to 0, w2
+        line_to w / 4, 0
+        line_to w / 2, w2
+        line_to w / 2, h
+        line_to 0, h
+      end
 
       fill_path(p4, fill: grad4)
 
