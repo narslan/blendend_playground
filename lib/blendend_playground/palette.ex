@@ -26,6 +26,7 @@ defmodule BlendendPlayground.Palette do
     nizami: ["#034AA6", "#72B6F2", "#73BFB1", "#F2A30F", "#F26F63"],
     renoir: ["#303E8C", "#F2AE2E", "#F28705", "#D91414", "#F2F2F2"],
     vangogh: ["#424D8C", "#84A9BF", "#C1D9CE", "#F2B705", "#F25C05"],
+    burn_grid_demo: ["#ffcd38", "#f2816a", "#71dcdd", "#2d557f", "#f7ede2"],
     # vangogh_2: ["#424D8C", "#84A9BF", "#C1D9CE", "#F2B705", "#F25C05"],
     mono: ["#D9D7D8", "#3B5159", "#5D848C", "#7CA2A6", "#262321"],
     tsu_arcade: [
@@ -169,9 +170,9 @@ defmodule BlendendPlayground.Palette do
     h =
       cond do
         delta == 0.0 -> 0.0
-        maxc == r -> 60.0 * :math.fmod(((g - b) / delta), 6.0)
-        maxc == g -> 60.0 * (((b - r) / delta) + 2.0)
-        true -> 60.0 * (((r - g) / delta) + 4.0)
+        maxc == r -> 60.0 * :math.fmod((g - b) / delta, 6.0)
+        maxc == g -> 60.0 * ((b - r) / delta + 2.0)
+        true -> 60.0 * ((r - g) / delta + 4.0)
       end
       |> normalize_hue()
 

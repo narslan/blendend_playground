@@ -1,4 +1,5 @@
-# Blit image test
+# Blit image test. TODO: This demo should be improved.
+# Finding a texture on internet shouldn't be so difficult.
 alias Blendend.Image
 alias Blendend.Canvas
 

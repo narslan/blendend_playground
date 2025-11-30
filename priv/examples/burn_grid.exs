@@ -1,19 +1,8 @@
 # Port of https://openprocessing.org/sketch/855987 to Blendend.
 # Exercises blend modes (burn), gradients, and soft blur shadows.
-use Blendend.Draw
-
+alias BlendendPlayground.Palette 
 defmodule BlendendPlayground.Demos.BurnGrid do
-  def parse_palette() do
-    url = "ffcd38-f2816a-71dcdd-2d557f-f7ede2"
-
-    url
-    |> String.split("-")
-    |> Enum.map(fn hex ->
-      <<r::binary-size(2), g::binary-size(2), b::binary-size(2)>> = hex
-      rgb(String.to_integer(r, 16), String.to_integer(g, 16), String.to_integer(b, 16))
-    end)
-  end
-
+ 
 
   def noise_overlay(w, h) do
     points =
@@ -22,10 +11,8 @@ defmodule BlendendPlayground.Demos.BurnGrid do
       end
 
     fn ->
-      canvas = Blendend.Draw.get_canvas()
-
       Enum.each(points, fn {x, y, weight} ->
-        Blendend.Canvas.set_stroke_width!(canvas, weight)
+        set_stroke_width weight
         line(x, y, x + 1, y + 1)
       end)
     end
@@ -34,15 +21,13 @@ defmodule BlendendPlayground.Demos.BurnGrid do
   def radial_gradient_fill(x0, y0, r0, x1, y1, r1, colors) do
     [c1 , c2 , c3 | _] = colors
 
-
-    Blendend.Style.Gradient.radial_from_stops(
-      {x0, y0, r0, x1, y1, r1},
-      [
-        {0.0, c1},
-        {0.5, c2},
-        {1.0, c3}
-      ]
-    ) 
+    radial_gradient x0, y0, r0, x1, y1, r1 do
+      add_stop 0.0, c1
+      add_stop 0.5, c2
+      add_stop 1.0, c3
+    end
+    
+     
   end
 
   def to_path(points) do
@@ -62,15 +47,15 @@ end
 w = 800
 h = 800
 alias BlendendPlayground.Demos.BurnGrid, as: Demo
-palette = Demo.parse_palette()
+palette = Palette.scheme(:burn_grid_demo)  
 noise = Demo.noise_overlay(w, h)
-
+ 
 draw w, h do
   # base background
   clear(fill: hsv(:rand.uniform(360), 0.05, 0.95))
 
   comp_op(:color_burn)
-  canvas = Blendend.Draw.get_canvas()
+  
   disable_style(:stroke)
 
   layers = 5
@@ -91,7 +76,7 @@ draw w, h do
         if :rand.uniform(100) > 33 do
           [c1, c2, c3] = Enum.take_random(palette, 3)
           grad = Demo.radial_gradient_fill(-d / 2, -d / 2, 0, -d / 2, -d / 2, d * 2, [c1, c2, c3])
-          Blendend.Canvas.set_fill_style!(canvas, grad)
+          set_fill_style grad
 
           shape =
             cond do
@@ -116,8 +101,6 @@ draw w, h do
 
   # back to normal comp, draw noise overlay
   comp_op(:src_over)
-  stroke_color = rgb(255, 255, 255, 20)
-  Blendend.Canvas.set_stroke_style!(canvas, stroke_color)
-  Blendend.Canvas.set_stroke_width!(canvas, 1.0)
+ 
   noise.()
 end

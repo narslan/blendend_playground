@@ -1,9 +1,6 @@
 # https://openprocessing.org/sketch/2497472
 use BlendendPlayground.Calculation.Macros
-use Blendend.Draw
 alias BlendendPlayground.Palette
-alias Blendend.Style.Gradient
-alias Blendend.Path
 
 defmodule BlendendPlayground.Demos.NightHouse do
   # drawHouse(x, y + hStep + ny, xStep, h, palette);
@@ -21,7 +18,6 @@ defmodule BlendendPlayground.Demos.NightHouse do
 
       scl = rand_between(0.75, 1.25)
       scale(scl, 1)
-      # set_stroke_width(1 / scl)
       # draw chimneys
       if :rand.uniform() > 0.5 do
         {ch, cs, cv} = List.last(palette)
@@ -34,14 +30,15 @@ defmodule BlendendPlayground.Demos.NightHouse do
       # fascia
       set_fill_style(hsv(0, 0, 1))
 
-      p = path do
-        move_to 0, w/2
-        line_to w * 3/ 4,0
-        line_to w, w/2
-        line_to w,h
-        line_to 0,h
-      end
-        
+      p =
+        path do
+          move_to(0, w / 2)
+          line_to(w * 3 / 4, 0)
+          line_to(w, w / 2)
+          line_to(w, h)
+          line_to(0, h)
+        end
+
       fill_path(p)
 
       shadow_path(p, 0.0, 0, w / 3, fill: rgb(0, 0, 0, 33), resolution: 0.1)
@@ -50,21 +47,18 @@ defmodule BlendendPlayground.Demos.NightHouse do
       {ch, cs, cv} = Enum.at(palette, 0)
 
       grad2 =
-        Gradient.linear_from_stops(
-          {0, 0, 0, w2},
-          [
-            {0.0, hsv(ch, cs, cv)},
-            {1.0, hsv(ch, cs, max(cv - 0.2, 0))}
-          ]
-        )
+        linear_gradient 0, 0, 0, w2 do
+          add_stop(0.0, hsv(ch, cs, cv))
+          add_stop(1.0, hsv(ch, cs, max(cv - 0.2, 0)))
+        end
 
-      p2 = path do
-        move_to w/4, 0
-        line_to w * 3/ 4,0
-        line_to w, w2
-        line_to w / 2, w2
-      end
-         
+      p2 =
+        path do
+          move_to(w / 4, 0)
+          line_to(w * 3 / 4, 0)
+          line_to(w, w2)
+          line_to(w / 2, w2)
+        end
 
       fill_path(p2, fill: grad2)
 
@@ -72,21 +66,18 @@ defmodule BlendendPlayground.Demos.NightHouse do
       {ch, cs, cv} = Enum.at(palette, 1)
 
       grad3 =
-        Gradient.linear_from_stops(
-          {0, w2, 0, h},
-          [
-            {0.0, hsv(ch, cs, cv)},
-            {0.1, hsv(ch, cs, max(cv - 0.2, 0))}
-          ]
-        )
+        linear_gradient 0, w2, 0, h do
+          add_stop(0.0, hsv(ch, cs, cv))
+          add_stop(0.1, hsv(ch, cs, max(cv - 0.2, 0)))
+        end
 
-       p3 = path do
-        move_to w/2, w2
-        line_to w, w2
-        line_to w, h
-        line_to w / 2, h
-      end
-         
+      p3 =
+        path do
+          move_to(w / 2, w2)
+          line_to(w, w2)
+          line_to(w, h)
+          line_to(w / 2, h)
+        end
 
       fill_path(p3, fill: grad3)
 
@@ -96,20 +87,19 @@ defmodule BlendendPlayground.Demos.NightHouse do
       c4 = Enum.at(palette, 3)
 
       grad4 =
-        Gradient.linear_from_stops(
-          {0, 0, 0, h},
-          [
-            {0.0, hsv(c3)},
-            {1 / 15, hsv(c4)}
-          ] )
+        linear_gradient 0, 0, 0, h do
+          add_stop(0.0, hsv(c3))
+          add_stop(1 / 15, hsv(c4))
+        end
 
-      p4 = path do
-        move_to 0, w2
-        line_to w / 4, 0
-        line_to w / 2, w2
-        line_to w / 2, h
-        line_to 0, h
-      end
+      p4 =
+        path do
+          move_to(0, w2)
+          line_to(w / 4, 0)
+          line_to(w / 2, w2)
+          line_to(w / 2, h)
+          line_to(0, h)
+        end
 
       fill_path(p4, fill: grad4)
 
@@ -149,10 +139,10 @@ draw width, height do
   set_stroke_join(:round)
 
   gradient =
-    Gradient.linear_from_stops(
-      {0, 0, 0, height},
-      [{0.0, hsv(220, 0.8, 0.0)}, {0.4, hsv(220, 0.8, 0.7)}]
-    )
+    linear_gradient 0, 0, 0, height do
+      add_stop(0.0, hsv(220, 0.8, 0.0))
+      add_stop(0.4, hsv(220, 0.8, 0.7))
+    end
 
   set_fill_style(gradient)
 
@@ -163,7 +153,7 @@ draw width, height do
   star_seed = :rand.uniform() * 1000.0
   # Sample noise on a coarse grid and spawn stars per cell (much cheaper).
   cell = 32
-  max_y = height * 0.55
+  max_y = height * 0.9
   noise_scale = 0.015
 
   for gx <- 0..div(width, cell),
@@ -172,7 +162,7 @@ draw width, height do
     cy = gy * cell + cell / 2
 
     # Fade out toward horizon to reduce stars near the bottom.
-    horizon_falloff = map(cy, 0, max_y, 1.0, 0.15)
+    horizon_falloff = map(cy, 0, max_y, 1.0, 0.65)
 
     n =
       Perlin.noise(cx * noise_scale, cy * noise_scale, star_seed)
@@ -183,16 +173,17 @@ draw width, height do
       cond do
         n > 0.75 -> 1
         n > 0.6 -> 1
-        
         true -> 0
       end
 
-    for _ <- 1..stars_here do
-      x = gx * cell + :rand.uniform() * cell
-      y = gy * cell + :rand.uniform() * cell
-      alpha = trunc(80 + n * 170) |> min(255)
-      radius = 0.6 + n * 1.2
-      circle(x, y, radius, fill: rgb(255, 255, 255, alpha))
+    if stars_here > 0 do
+      for _ <- 1..stars_here do
+        x = gx * cell + :rand.uniform() * cell
+        y = gy * cell + :rand.uniform() * cell
+        alpha = trunc(80 + n * 170) |> min(255)
+        radius = 0.6 + n * 1.2
+        circle(x, y, radius, fill: rgb(255, 255, 255, alpha))
+      end
     end
   end
 
@@ -219,14 +210,13 @@ draw width, height do
     end)
 
     gradient2 =
-      Gradient.linear_from_stops(
-        {0, y, 0, height},
-        [{1.0, hsv(0, 0, 0, 1)}, {0.0, hsv(0, 0, 0, 0)}]
-      )
+      linear_gradient 0, y, 0, height do
+        add_stop(1.0, hsv(0, 0, 0, 1))
+        add_stop(0.0, hsv(0, 0, 0, 0))
+      end
 
     set_fill_style(gradient2)
     comp_op(:src_over)
 
-    # blend/gradient work per row here
   end)
 end
