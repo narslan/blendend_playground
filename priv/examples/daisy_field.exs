@@ -11,7 +11,7 @@ defmodule BlendendPlayground.Demos.DaisyField do
 
   def draw_flower(x, y, w) do
     num = rand_int(11, 15)
-    aa = rand_range(0.0, 10.0)
+    aa = rand_between(0.0, 10.0)
 
     petals =
       Enum.map(0..(num - 1), fn i ->
@@ -31,43 +31,42 @@ defmodule BlendendPlayground.Demos.DaisyField do
     set_stroke_style(rgb(0, 0, 0))
     set_stroke_width(w * 0.013)
     center_color = rand_pick(@center_colors) |> hex_color()
-    draw_irregular_circle(x, y, w * rand_range(0.25, 0.3), center_color)
+    draw_irregular_circle(x, y, w * rand_between(0.25, 0.3), center_color)
   end
 
   defp draw_petal(x, y, w, a, fill_color) do
     ap1 = %{x: 0.0, y: -w * 0.025, a1: 0.0, a2: 0.0, r1: 0.0, r2: 0.0}
 
     ap2 = %{
-      x: w * rand_range(0.5, 0.7),
-      y: -w * rand_range(0.125, 0.175),
+      x: w * rand_between(0.5, 0.7),
+      y: -w * rand_between(0.125, 0.175),
       a1: :math.pi(),
       a2: 0.0,
-      r1: w * rand_range(0.19, 0.21),
-      r2: w * rand_range(0.19, 0.21)
+      r1: w * rand_between(0.19, 0.21),
+      r2: w * rand_between(0.19, 0.21)
     }
 
     ap3 = %{
       x: w,
       y: 0.0,
-      a1: -(:math.pi() / 2) + :math.pi() * rand_range(-0.02, 0.02),
-      a2: :math.pi() / 2 + :math.pi() * rand_range(-0.02, 0.02),
-      r1: w * rand_range(0.08, 0.12),
-      r2: w * rand_range(0.08, 0.12)
+      a1: -(:math.pi() / 2) + :math.pi() * rand_between(-0.02, 0.02),
+      a2: :math.pi() / 2 + :math.pi() * rand_between(-0.02, 0.02),
+      r1: w * rand_between(0.08, 0.12),
+      r2: w * rand_between(0.08, 0.12)
     }
 
     ap4 = %{
-      x: w * rand_range(0.5, 0.7),
-      y: w * rand_range(0.125, 0.175),
+      x: w * rand_between(0.5, 0.7),
+      y: w * rand_between(0.125, 0.175),
       a1: 0.0,
       a2: :math.pi(),
-      r1: w * rand_range(0.19, 0.21),
-      r2: w * rand_range(0.19, 0.21)
+      r1: w * rand_between(0.19, 0.21),
+      r2: w * rand_between(0.19, 0.21)
     }
 
     ap5 = %{x: 0.0, y: w * 0.025, a1: 0.0, a2: 0.0, r1: 0.0, r2: 0.0}
 
-    path =
-      Path.new!()
+    p =   Path.new!()
       |> Path.move_to!(ap1.x, ap1.y)
       |> add_segment(ap1, ap2)
       |> add_segment(ap2, ap3)
@@ -77,12 +76,12 @@ defmodule BlendendPlayground.Demos.DaisyField do
 
     translate x, y do
       rotate a do
-        fill_path(path, fill: fill_color)
-        stroke_path(path, stroke_width: w * 0.015)
+        fill_path(p, fill: fill_color)
+        stroke_path(p, stroke_width: w * 0.015)
 
         veiny = w * 0.015
-        line(0.0, 0.0, w * rand_range(0.4, 0.7), w * rand_range(0.02, 0.04), stroke_width: veiny)
-        line(0.0, 0.0, w * rand_range(0.4, 0.7), -w * rand_range(0.02, 0.04), stroke_width: veiny)
+        line(0.0, 0.0, w * rand_between(0.4, 0.7), w * rand_between(0.02, 0.04), stroke_width: veiny)
+        line(0.0, 0.0, w * rand_between(0.4, 0.7), -w * rand_between(0.02, 0.04), stroke_width: veiny)
       end
     end
   end
@@ -127,7 +126,7 @@ defmodule BlendendPlayground.Demos.DaisyField do
   end
 
   defp noisy_point(cx, cy, d, angle) do
-    offset = rand_range(-2.0, 1.0) * d * 0.01
+    offset = rand_between(-2.0, 1.0) * d * 0.01
     r = d / 2.0 + offset
     {cx + r * cos(angle), cy + r * sin(angle)}
   end
@@ -136,7 +135,7 @@ defmodule BlendendPlayground.Demos.DaisyField do
     rgb(String.to_integer(r1, 16), String.to_integer(g1, 16), String.to_integer(b1, 16))
   end
 
-  def rand_range(min, max), do: min + :rand.uniform() * (max - min)
+  
   defp rand_int(min, max), do: :rand.uniform(max - min + 1) + min - 1
   defp rand_pick(list), do: Enum.random(list)
 
@@ -159,7 +158,7 @@ draw width, height do
   clear(fill: rgb(235, 235, 235))
 
   Enum.each(1..1000, fn _ ->
-    w = DaisyField.rand_range(0.08, 0.12) * width
+    w = rand_between(0.08, 0.12) * width
     x = :rand.uniform() * width
     y = :rand.uniform() * height
     set_stroke_width(w * 0.015)

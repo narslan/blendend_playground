@@ -10,7 +10,7 @@ draw 1500, 1500 do
   staff_color = hsv(125, 0.4, 0.8)
   accidental_color = hsv(125, 0.1, 0.3)
   center_x = 760.0
-  center_y = 700.0
+  center_y = 650.0
   base_radius = 470.0
 
   # Glyphs for accidentals.

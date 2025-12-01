@@ -141,7 +141,7 @@ draw w, h do
   [bg | colors] = palette
 
   clear(fill: bg)
-  # subtle dark overlay like p5.js blendMode(MULTIPLY); background(...)
+      
   set_comp_op  :multiply
   clear(fill: rgb(0, 0, 0, 60))
   set_comp_op :src_over
