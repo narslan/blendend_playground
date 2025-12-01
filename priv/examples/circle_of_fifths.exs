@@ -1,5 +1,5 @@
 # circle of fifths
-draw 1400, 1400 do
+draw 1500, 1500 do
   clear(fill: rgb(255, 255, 255))
 
   face = font_face("priv/fonts/BravuraText.otf")
@@ -9,7 +9,7 @@ draw 1400, 1400 do
   note_step = line_spacing / 2.0
   staff_color = hsv(125, 0.4, 0.8)
   accidental_color = hsv(125, 0.1, 0.3)
-  center_x = 700.0
+  center_x = 760.0
   center_y = 700.0
   base_radius = 470.0
 
@@ -90,23 +90,23 @@ draw 1400, 1400 do
   ]
 
   minor_key_order = [
-    "a minor",
-    "e minor",
-    "b minor",
-    "f# minor",
-    "c# minor",
-    "g# minor",
-    "d# minor",
-    "a# minor",
-    "e# minor",
-    "db minor",
-    "ab minor",
-    "eb minor",
-    "bb minor",
-    "f minor",
-    "c minor",
-    "g minor",
-    "d minor"
+    "a",
+    "e",
+    "b",
+    "f#",
+    "c#",
+    "g#",
+    "d#",
+    "a#",
+    "e#",
+    "d flat",
+    "a flat",
+    "e flat",
+    "b flat",
+    "f",
+    "c",
+    "g",
+    "d "
   ]
 
   accidental_spacing = line_spacing * 1.6
@@ -123,7 +123,7 @@ draw 1400, 1400 do
     acc_count = length(accidentals)
 
     angle = idx * (:math.pi() * 2) / length(key_order) - :math.pi() / 2
-    ring_radius = base_radius + acc_count * 14.0
+    ring_radius = base_radius + acc_count * 28.0
     staff_center_x = center_x + ring_radius * :math.cos(angle)
     staff_center_y = center_y + ring_radius * :math.sin(angle)
 
@@ -166,17 +166,17 @@ draw 1400, 1400 do
     end)
 
     # Label to the right of the staff.
-    label_font = load_font "priv/fonts/Alegreya-Regular.otf", 28.0
+    label_font = load_font "priv/fonts/Alegreya-Regular.otf", 38.0
     # Major label.
     text label_font,
       staff_left ,
-      staff_center_y + 85.0,
-      Atom.to_string(key)|> String.capitalize |> String.replace("_", " "),
+      staff_center_y + 95.0,
+      Atom.to_string(key)|> String.capitalize |> String.replace("_", " ") |> String.replace("major", " "),
       fill: accidental_color
     # Minor partner.
     text label_font,
       staff_left ,
-      staff_center_y + 115.0,
+      staff_center_y + 128.0,
       Enum.at(minor_key_order, idx),
       fill: accidental_color
   end)
