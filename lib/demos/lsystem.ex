@@ -110,6 +110,8 @@ defmodule BlendendPlayground.Demos.LSystem do
     proj_k = opts[:proj_k] || 0.35
     leaf_len = opts[:leaf_len] || len * 0.6
     leaf_width = opts[:leaf_width] || len * 0.3
+    leaf_color = opts[:leaf_color]
+    wedge_color = opts[:wedge_color]
 
     tokens = tokenize(word)
 
@@ -193,7 +195,7 @@ defmodule BlendendPlayground.Demos.LSystem do
 
           p = Blendend.Path.close!(p)
 
-          color = Enum.at(colors, rem(cidx, length(colors)))
+          color = wedge_color || Enum.at(colors, rem(cidx, length(colors)))
           fill_path(p, fill: color)
           {pos, rot, dia, cidx, len_scale, stack, nil}
 
@@ -216,7 +218,7 @@ defmodule BlendendPlayground.Demos.LSystem do
             |> Blendend.Path.quad_to!(c2x, c2y, p0x, p0y)
             |> Blendend.Path.close!()
 
-          fill_path(p, fill: rgb(70, 140, 70))
+          fill_path(p, fill: leaf_color || Enum.at(colors, rem(cidx, length(colors))))
           {pos, rot, dia, cidx, len_scale, stack, wedge}
 
         true ->
