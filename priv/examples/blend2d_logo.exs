@@ -13,6 +13,6 @@ grad2 = linear_gradient 97, 97, 235, 235 do
 end  
 
 circle 90, 90, 87, fill: grad
-comp_op :difference
+set_comp_op :difference
 round_rect 97, 97, 150, 150, 20, 20, fill: grad2
 end

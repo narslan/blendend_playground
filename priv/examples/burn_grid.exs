@@ -18,17 +18,6 @@ defmodule BlendendPlayground.Demos.BurnGrid do
     end
   end
 
-  def radial_gradient_fill(x0, y0, r0, x1, y1, r1, colors) do
-    [c1 , c2 , c3 | _] = colors
-
-    radial_gradient x0, y0, r0, x1, y1, r1 do
-      add_stop 0.0, c1
-      add_stop 0.5, c2
-      add_stop 1.0, c3
-    end
-    
-     
-  end
 
   def to_path(points) do
     {path, started?} =
@@ -54,7 +43,7 @@ draw w, h do
   # base background
   clear(fill: hsv(:rand.uniform(360), 0.05, 0.95))
 
-  comp_op(:color_burn)
+  set_comp_op(:color_burn)
   
   disable_style(:stroke)
 
@@ -75,14 +64,17 @@ draw w, h do
 
         if :rand.uniform(100) > 33 do
           [c1, c2, c3] = Enum.take_random(palette, 3)
-          grad = Demo.radial_gradient_fill(-d / 2, -d / 2, 0, -d / 2, -d / 2, d * 2, [c1, c2, c3])
-          set_fill_style grad
 
+          grad = radial_gradient -d / 2, -d / 2, 0, -d / 2, -d / 2, d * 2 do
+            add_stop 0.0, c1
+            add_stop 0.5, c2
+            add_stop 1.0, c3
+          end
+          
+          set_fill_style grad
+            
           shape =
             cond do
-              :rand.uniform(100) > 50 and :rand.uniform(100) > 50 ->
-                [{-d / 2, -d / 2}, {0, -d / 2}, {d / 2, d / 2}, {0, d / 2}]
-
               :rand.uniform(100) > 50 ->
                 [{d / 2, -d / 2}, {0, -d / 2}, {-d / 2, d / 2}, {0, d / 2}]
 
@@ -92,7 +84,8 @@ draw w, h do
 
           path = Demo.to_path(shape)
 
-          shadow_path(path, 0.0, 0.0, w / 40.0, fill: Enum.random(palette))
+          shadow_path(path, 0.0, 0.0, w / 40.0, fill: Enum.random(palette),  resolution: 0.4)
+          
           polygon shape
         end
       end
@@ -100,7 +93,7 @@ draw w, h do
   end
 
   # back to normal comp, draw noise overlay
-  comp_op(:src_over)
+  set_comp_op(:src_over)
  
   noise.()
 end

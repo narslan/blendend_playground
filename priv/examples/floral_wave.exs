@@ -142,9 +142,9 @@ draw w, h do
 
   clear(fill: bg)
   # subtle dark overlay like p5.js blendMode(MULTIPLY); background(...)
-  comp_op  :multiply
+  set_comp_op  :multiply
   clear(fill: rgb(0, 0, 0, 60))
-  comp_op :src_over
+  set_comp_op :src_over
 
   rows = 5
   offset = w / 5

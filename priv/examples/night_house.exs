@@ -192,7 +192,7 @@ draw width, height do
   noise_scale = 0.1
   palette = Palette.scheme_hsv(:random)
 
-  comp_op(:multiply)
+  set_comp_op(:multiply)
 
   NightHouse.walk_rows(height / 4, height, fn y ->
     x_step_base = map(y, height / 4, height, w / 2, w * 3)
@@ -216,7 +216,7 @@ draw width, height do
       end
 
     set_fill_style(gradient2)
-    comp_op(:src_over)
+    set_comp_op(:src_over)
 
   end)
 end
