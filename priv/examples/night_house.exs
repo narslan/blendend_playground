@@ -83,13 +83,13 @@ defmodule BlendendPlayground.Demos.NightHouse do
 
       # fascia 2
 
-      c3 = Enum.at(palette, 2)
-      c4 = Enum.at(palette, 3)
+      {h3, s3, v3} = Enum.at(palette, 2)
+      {h4, s4, v4} = Enum.at(palette, 3)
 
       grad4 =
         linear_gradient 0, 0, 0, h do
-          add_stop(0.0, hsv(c3))
-          add_stop(1 / 15, hsv(c4))
+          add_stop(0.0, hsv(h3, s3, v3))
+          add_stop(1 / 15, hsv(h4, s4, v4))
         end
 
       p4 =
