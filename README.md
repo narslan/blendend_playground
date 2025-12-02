@@ -4,18 +4,17 @@
 
   ⚠️  Safety: the backend evaluates the code you type. Run it only on a trusted machine.
 
-  ## Requirements
-  - TODO: 
+## Requirements
+- Elixir (tested on 1.19)
+- Erlang/OTP 27+
+- `mix` to fetch/build dependencies (`mix deps.get` will pull `blendend`)
+- Node.js + pnpm/npm if you rebuild the frontend in `assets/`
   ## Run (dev)
   ```sh
   mix deps.get
   mix run --no-halt
   # open http://localhost:4000
   ```
-
-  ## Contributing
-
-  Issues and PRs are welcome.
 
 ## Licenses
 
