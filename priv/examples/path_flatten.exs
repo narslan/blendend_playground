@@ -9,7 +9,7 @@ height = 800
 
 draw width, height do
  
-  palette = Palette.scheme(:benedictus)
+  palette = Palette.scheme(:random)
   
   bg = rgb(0x2e,0x31,0x38)
   clear(fill: bg)
