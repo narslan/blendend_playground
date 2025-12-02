@@ -67,8 +67,7 @@ draw 1500, 1500 do
     f_flat_major: [:e_flat, :a_flat, :d_flat, :g_flat, :c_flat, :f_flat, :b_double_flat]
   }
 
-  # Order to render, rotated so C major sits at the top (poles hold fewer accidentals,
-  # equator lands on keys with more accidentals).
+  # Order to render, rotated so C major sits at the top
   key_order = [
     :c_major,
     :g_major,
@@ -165,7 +164,7 @@ draw 1500, 1500 do
         fill: accidental_color
     end)
 
-    # Label to the right of the staff.
+    # Label to the bottom of the staff.
     label_font = load_font "priv/fonts/Alegreya-Regular.otf", 38.0
     # Major label.
     text label_font,
