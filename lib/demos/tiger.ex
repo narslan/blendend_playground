@@ -20,13 +20,19 @@ defmodule BlendendPlayground.Demos.Tiger do
     do: {acc, ci, pi}
 
   defp parse_paths(cmds, pts, h, ci, pi, acc) do
-    fill_flag = Enum.at(cmds, ci); ci = ci + 1
-    stroke_flag = Enum.at(cmds, ci); ci = ci + 1
-    cap_flag = Enum.at(cmds, ci); ci = ci + 1
-    join_flag = Enum.at(cmds, ci); ci = ci + 1
+    fill_flag = Enum.at(cmds, ci)
+    ci = ci + 1
+    stroke_flag = Enum.at(cmds, ci)
+    ci = ci + 1
+    cap_flag = Enum.at(cmds, ci)
+    ci = ci + 1
+    join_flag = Enum.at(cmds, ci)
+    ci = ci + 1
 
-    miter = Enum.at(pts, pi); pi = pi + 1
-    stroke_width = Enum.at(pts, pi); pi = pi + 1
+    miter = Enum.at(pts, pi)
+    pi = pi + 1
+    stroke_width = Enum.at(pts, pi)
+    pi = pi + 1
 
     sc_r = trunc(Enum.at(pts, pi + 0) * 255)
     sc_g = trunc(Enum.at(pts, pi + 1) * 255)
@@ -36,7 +42,8 @@ defmodule BlendendPlayground.Demos.Tiger do
     fc_b = trunc(Enum.at(pts, pi + 5) * 255)
     pi = pi + 6
 
-    count = trunc(Enum.at(pts, pi)); pi = pi + 1
+    count = trunc(Enum.at(pts, pi))
+    pi = pi + 1
 
     {path, ci_after, pi_after} =
       build_path(count, cmds, pts, h, ci, pi, Path.new!())

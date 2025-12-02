@@ -31,7 +31,7 @@ fish = BlendendPlayground.Demos.Fish.data()
 {:ok, img} = Image.from_data(fish)
 {:ok, {img_w, img_h}} = Image.size(img)
 
-pat = Blendend.Style.Pattern.create!(img)
+pat = PatternStyle.create!(img)
 
 # we want roughly 2 tiles across and 2 down
 scale_x = panel_w / 2.0 / img_w
@@ -55,8 +55,7 @@ Enum.with_index(modes, fn mode, idx ->
 with_transform Matrix2D.translation(x_off * 1.0, y_off * 1.0) do
    :ok = PatternStyle.set_extend(pat, mode)
 
-   rect(0.0, 0.0, panel_w * 1.0, panel_h * 1.0,
-     fill: pat)
+   rect(0.0, 0.0, panel_w * 1.0, panel_h * 1.0, fill: pat)
   end
  end)
 end

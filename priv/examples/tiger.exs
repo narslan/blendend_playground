@@ -23,6 +23,4 @@ draw TigerData.width(), TigerData.height() do
         stroke_miter_limit: seg.stroke_opts.stroke_miter_limit
     end
   end)
-
- 
 end

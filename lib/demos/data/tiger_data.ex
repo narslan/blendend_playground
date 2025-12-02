@@ -1,4 +1,4 @@
-defmodule BlendendPlayground.Demos.TigerData do
+defmodule BlendendPlayground.TigerData do
   @moduledoc false
   # This data is originally comes from blend2d source.
   @width 612
