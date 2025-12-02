@@ -1,13 +1,14 @@
-#Port of https://openprocessing.org/sketch/2522094.
+# Port of https://openprocessing.org/sketch/2522094.
 alias Blendend.Path
 alias Blendend.Style.Color
 use Blendend.Draw
 use BlendendPlayground.Calculation.Macros
+
 defmodule BlendendPlayground.Demos.DaisyField do
   @tau :math.pi() * 2
+  @circle_angles Enum.map(0..90, &(&1 * (@tau / 90)))
   @petal_colors ["#3f88c5", "#c1292e", "#ffffff", "#ed91bd", "#17bebb", "#f1d302", "#2e933c"]
- # @petal_colors ["#5EC8F2",  "#459DBF",   "#F26D6D",  "#D9D16A", "#C1D9CE", "#2e933c", "#F2F2F2", "#F2E6D8"]
-  @center_colors [ "#f2dd52", "#f0c330","#F2B705",  "#F2A950", "#F2AE2E"]
+  @center_colors ["#f2dd52", "#f0c330", "#F2B705", "#F2A950", "#F2AE2E"]
 
   def draw_flower(x, y, w) do
     num = rand_int(11, 15)
@@ -20,8 +21,8 @@ defmodule BlendendPlayground.Demos.DaisyField do
       end)
       |> Enum.shuffle()
 
-    #petal_colors = scheme(:hokusai_blue)
-    #center_colors = scheme(:mono)
+    # petal_colors = scheme(:hokusai_blue)
+    # center_colors = scheme(:mono)
     fill_color = rand_pick(@petal_colors) |> hex_color()
 
     Enum.each(petals, fn %{x: px, y: py, w: pw, a: pa} ->
@@ -66,13 +67,13 @@ defmodule BlendendPlayground.Demos.DaisyField do
 
     ap5 = %{x: 0.0, y: w * 0.025, a1: 0.0, a2: 0.0, r1: 0.0, r2: 0.0}
 
-    p =   Path.new!()
-      |> Path.move_to!(ap1.x, ap1.y)
-      |> add_segment(ap1, ap2)
-      |> add_segment(ap2, ap3)
-      |> add_segment(ap3, ap4)
-      |> add_segment(ap4, ap5)
-      |> Path.close!()
+    path p do
+      move_to(ap1.x, ap1.y)
+      add_segment(p, ap1, ap2)
+      add_segment(p, ap2, ap3)
+      add_segment(p, ap3, ap4)
+      add_segment(p, ap4, ap5)
+    end
 
     translate x, y do
       rotate a do
@@ -80,8 +81,14 @@ defmodule BlendendPlayground.Demos.DaisyField do
         stroke_path(p, stroke_width: w * 0.015)
 
         veiny = w * 0.015
-        line(0.0, 0.0, w * rand_between(0.4, 0.7), w * rand_between(0.02, 0.04), stroke_width: veiny)
-        line(0.0, 0.0, w * rand_between(0.4, 0.7), -w * rand_between(0.02, 0.04), stroke_width: veiny)
+
+        line(0.0, 0.0, w * rand_between(0.4, 0.7), w * rand_between(0.02, 0.04),
+          stroke_width: veiny
+        )
+
+        line(0.0, 0.0, w * rand_between(0.4, 0.7), -w * rand_between(0.02, 0.04),
+          stroke_width: veiny
+        )
       end
     end
   end
@@ -93,24 +100,22 @@ defmodule BlendendPlayground.Demos.DaisyField do
   end
 
   defp draw_irregular_circle(x, y, d, fill_color) do
-    angles = Enum.map(0..90, &(&1 * (@tau / 90)))
+    angles = @circle_angles
     {fx, fy} = noisy_point(x, y, d, hd(angles))
 
-    path =
-      Path.new!()
-      |> Path.move_to!(fx, fy)
+    path circle_path do
+      move_to(fx, fy)
 
-    angles
-    |> tl()
-    |> Enum.each(fn ang ->
-      {px, py} = noisy_point(x, y, d, ang)
-      Path.line_to!(path, px, py)
-    end)
+      angles
+      |> tl()
+      |> Enum.each(fn ang ->
+        {px, py} = noisy_point(x, y, d, ang)
+        line_to(px, py)
+      end)
+    end
 
-    Path.close!(path)
-
-    fill_path path, fill: fill_color
-    stroke_path path, stroke_width: d * 0.013
+    fill_path(circle_path, fill: fill_color)
+    stroke_path(circle_path, stroke_width: d * 0.013)
 
     Enum.each(1..round(d * 5), fn _ ->
       a = :rand.uniform() * @tau
@@ -135,7 +140,6 @@ defmodule BlendendPlayground.Demos.DaisyField do
     rgb(String.to_integer(r1, 16), String.to_integer(g1, 16), String.to_integer(b1, 16))
   end
 
-  
   defp rand_int(min, max), do: :rand.uniform(max - min + 1) + min - 1
   defp rand_pick(list), do: Enum.random(list)
 
