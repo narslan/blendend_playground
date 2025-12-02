@@ -70,8 +70,6 @@ draw width, height do
         {px, py, _}, acc -> Path.line_to!(acc, px, py)
       end)
 
-    set_style_alpha(:stroke, 1.0)
-
     
     stroke_path path_flare,
       stroke: col,
