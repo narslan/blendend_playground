@@ -1,23 +1,56 @@
 # circle of fifths
-draw 1500, 1500 do
-  clear(fill: rgb(255, 255, 255))
+alias BlendendPlayground.Palette
 
-  face = font_face("priv/fonts/BravuraText.otf")
-  music_font = font_create(face, 90.0)
-  staff_scale = 24.0
+width = 1500
+height = 1500
+draw 1500, 1500 do
+  clear(fill: rgb(250, 250, 250, 250))
+
+  #set_comp_op :pin_light                        
+  music_font = load_font("priv/fonts/BravuraText.otf", 60)
+  label_font = load_font("priv/fonts/Alegreya-Regular.otf",52.0)
+  
+  staff_scale = 23.0
   line_spacing = staff_scale * 0.5
   note_step = line_spacing / 2.0
+  # colors 
+  #palette = Palette.scheme(:random)
+
+  #staff_color = Enum.random(palette)
+  #accidental_color = Enum.random(palette)
+  #clef_color = Enum.random(palette) 
+  #major_label_color = Enum.random(palette) 
+  #minor_label_color = Enum.random(palette) 
+  
   staff_color = hsv(125, 0.4, 0.8)
   accidental_color = hsv(125, 0.1, 0.3)
-  center_x = 760.0
-  center_y = 650.0
-  base_radius = 470.0
-
+  clef_color = hsv(100, 1.0, 0.1, 250) 
+  major_label_color = hsv(300, 0.9, 0.55, 200) 
+  minor_label_color = hsv(30, 0.5, 0.15, 200)
+    
+  
+  center_x = width/2
+  center_y = height/2
+  base_radius = 400.0
+  
   # Glyphs for accidentals.
   sharp = <<0xE262::utf8>>
   flat = <<0xE260::utf8>>
   double_flat = <<0xE264::utf8>>
   double_sharp = <<0xE263::utf8>>
+  # Accent ring to frame the key signatures.
+  ring_outer = base_radius * 1.5
+  ring_inner = base_radius * 0.9
+  ring_grad =
+    radial_gradient center_x, center_y, ring_outer,
+                    center_x, center_y, ring_inner do
+      add_stop 0.0, hsv(225, 0.1, 0.92, 200)
+      add_stop 0.6, hsv(225, 0.2, 0.85, 180)
+      add_stop 1.0, hsv(225, 0.25, 0.75, 140)
+    end
+
+  circle center_x, center_y, ring_outer, fill: ring_grad
+  circle center_x, center_y, 0, fill: rgb(255, 255, 255)
 
   # Positions (in half-line steps) relative to the middle line (B). Positive is upward.
   pitch_y_steps = %{
@@ -108,9 +141,9 @@ draw 1500, 1500 do
     "d "
   ]
 
-  accidental_spacing = line_spacing * 1.6
-  clef_x_offset = staff_scale * 0.3
-  key_start_offset = staff_scale * 2.2
+  accidental_spacing = line_spacing 
+  clef_x_offset = staff_scale - 10
+  key_start_offset = staff_scale * 2
   base_staff_width = 100.0
 
   Enum.with_index(key_order)
@@ -122,61 +155,69 @@ draw 1500, 1500 do
     acc_count = length(accidentals)
 
     angle = idx * (:math.pi() * 2) / length(key_order) - :math.pi() / 2
-    ring_radius = base_radius + acc_count * 28.0
+    ring_radius = base_radius * 1.2 + acc_count
     staff_center_x = center_x + ring_radius * :math.cos(angle)
     staff_center_y = center_y + ring_radius * :math.sin(angle)
+    # Rotate the entire key group about its own center.
+    m =
+      matrix do
+        translate(staff_center_x, staff_center_y)
+        rotate(angle + :math.pi() / 2)
+      end
 
-    staff_left = staff_center_x - half_w
-    staff_right = staff_center_x + half_w
+    with_transform m do
 
-    # Staff lines.
-    Enum.each(0..4, fn line_idx ->
-      offset = (line_idx - 2) * line_spacing
-      y = staff_center_y + offset
-      line staff_left, y, staff_right, y,
-        stroke: staff_color,
-        stroke_width: 2.0
-    end)
+      staff_left = -half_w
+      staff_right = half_w
 
-    # G clef.
-    clef_x = staff_left + clef_x_offset
-    clef_y = staff_center_y + staff_scale * 1.4
-    text music_font, clef_x, clef_y, <<0xE050::utf8>>, fill: rgb(:random)
+      Enum.each(0..4, fn line_idx ->
+        offset = (line_idx - 2) * line_spacing
+        y = offset
+        line staff_left, y, staff_right, y,
+          stroke: staff_color,
+          stroke_width: 2.0
+      end)
 
-    # Accidentals for this key.
-    Enum.with_index(accidentals)
-    |> Enum.each(fn {pitch, a_idx} ->
-      y_steps = Map.fetch!(pitch_y_steps, pitch)
-      pitch_name = Atom.to_string(pitch)
+      # G clef.
+      clef_x = staff_left + clef_x_offset
+      clef_y = staff_scale * 1.4
 
-      glyph =
-        cond do
-          String.ends_with?(pitch_name, "double_flat") -> double_flat
-          String.ends_with?(pitch_name, "double_sharp") -> double_sharp
-          String.ends_with?(pitch_name, "sharp") -> sharp
-          true -> flat
-        end
+      text music_font, clef_x, clef_y, <<0xE050::utf8>>, fill: clef_color
 
-      text music_font,
-        clef_x + key_start_offset + a_idx * accidental_spacing,
-        staff_center_y - y_steps * note_step,
-        glyph,
-        fill: accidental_color
-    end)
+      # Accidentals for this key.
+      Enum.with_index(accidentals)
+      |> Enum.each(fn {pitch, a_idx} ->
+        y_steps = Map.fetch!(pitch_y_steps, pitch)
+        pitch_name = Atom.to_string(pitch)
 
-    # Label to the bottom of the staff.
-    label_font = load_font "priv/fonts/Alegreya-Regular.otf", 38.0
-    # Major label.
-    text label_font,
-      staff_left ,
-      staff_center_y + 95.0,
-      Atom.to_string(key)|> String.capitalize |> String.replace("_", " ") |> String.replace("major", " "),
-      fill: accidental_color
-    # Minor partner.
-    text label_font,
-      staff_left ,
-      staff_center_y + 128.0,
-      Enum.at(minor_key_order, idx),
-      fill: accidental_color
+        glyph =
+          cond do
+            String.ends_with?(pitch_name, "double_flat") -> double_flat
+            String.ends_with?(pitch_name, "double_sharp") -> double_sharp
+            String.ends_with?(pitch_name, "sharp") -> sharp
+            true -> flat
+          end
+
+        text music_font,
+          clef_x + key_start_offset + a_idx * accidental_spacing,
+          -(y_steps * note_step),
+          glyph,
+          fill: accidental_color
+      end)
+
+      # Labels anchored to the rotated group so they share orientation.
+      major_label =
+        Atom.to_string(key)
+        |> String.capitalize()
+        |> String.replace("_", " ")
+        |> String.replace("major", " ")
+
+      minor_label = Enum.at(minor_key_order, idx)
+      label_y = line_spacing * 4.5
+
+      
+      text label_font, -half_w + 24, label_y - line_spacing * 9.6, major_label, fill: major_label_color
+      text label_font, -half_w + 34, label_y + line_spacing * 6.6, minor_label, fill: minor_label_color
+    end
   end)
 end
