@@ -105,11 +105,12 @@ draw width, height do
   end)
   
   # Light noise layer on top
-  Enum.each(1..5000, fn _ ->
+  noise_color= rgb(255, 255, 255, 8)
+  Enum.each(1..500, fn _ ->
     px = :rand.uniform() * width
-   py = :rand.uniform() * height
-    r = rand_between(0.4, 1.4)
-    circle(px, py, r, fill: Style.Color.rgb!(255, 255, 255, 8))
+    py = :rand.uniform() * height
+    r = rand_between(1.4, 2.4)
+    circle(px, py, r, fill: noise_color)
   end)
 
   
