@@ -105,7 +105,7 @@ draw width, height do
   end)
   
   # Light noise layer on top
-  Enum.each(1..50_000, fn _ ->
+  Enum.each(1..5000, fn _ ->
     px = :rand.uniform() * width
    py = :rand.uniform() * height
     r = rand_between(0.4, 1.4)

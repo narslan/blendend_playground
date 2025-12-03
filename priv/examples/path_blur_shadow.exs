@@ -5,6 +5,7 @@ draw 720, 420 do
 
   path ring do
     add_circle(220, 210, 96.0)
+    close()
   end
 
   path star do
@@ -18,6 +19,7 @@ draw 720, 420 do
     line_to(405, 250)
     line_to(335, 200)
     line_to(420, 190)
+    close()
   end
 
   # Soft shadow and glow on the ring

@@ -73,6 +73,7 @@ defmodule BlendendPlayground.Demos.DaisyField do
       add_segment(p, ap2, ap3)
       add_segment(p, ap3, ap4)
       add_segment(p, ap4, ap5)
+      close()
     end
 
     translate x, y do
@@ -112,6 +113,7 @@ defmodule BlendendPlayground.Demos.DaisyField do
         {px, py} = noisy_point(x, y, d, ang)
         line_to(px, py)
       end)
+      close()
     end
 
     fill_path(circle_path, fill: fill_color)

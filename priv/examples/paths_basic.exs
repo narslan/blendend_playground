@@ -10,6 +10,7 @@ draw 512, 512 do
     line_to(97, 115)
     arc_quadrant_to(97, 97, 115, 97)
     add_circle(90, 90, 87)
+    close()
   end
 
 # set fill_rule to :non_zero to see the change

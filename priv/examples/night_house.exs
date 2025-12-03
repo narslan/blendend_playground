@@ -37,6 +37,7 @@ defmodule BlendendPlayground.Demos.NightHouse do
           line_to(w, w / 2)
           line_to(w, h)
           line_to(0, h)
+          close()
         end
 
       fill_path(p)
@@ -58,6 +59,7 @@ defmodule BlendendPlayground.Demos.NightHouse do
           line_to(w * 3 / 4, 0)
           line_to(w, w2)
           line_to(w / 2, w2)
+          close()
         end
 
       fill_path(p2, fill: grad2)
@@ -77,6 +79,7 @@ defmodule BlendendPlayground.Demos.NightHouse do
           line_to(w, w2)
           line_to(w, h)
           line_to(w / 2, h)
+          close()
         end
 
       fill_path(p3, fill: grad3)
@@ -99,6 +102,7 @@ defmodule BlendendPlayground.Demos.NightHouse do
           line_to(w / 2, w2)
           line_to(w / 2, h)
           line_to(0, h)
+          close()
         end
 
       fill_path(p4, fill: grad4)
