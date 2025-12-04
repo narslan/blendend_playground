@@ -1,68 +1,99 @@
-const root = document.getElementById("swatches-root");
+function renderSwatches(payload) {
+  return fetch("/swatches/render", {
+    method: "POST",
+    headers: {"content-type": "application/json"},
+    body: JSON.stringify(payload)
+  })
+    .then((r) => r.json())
+    .then(({image}) => image)
+    .catch((err) => {
+      console.error(err);
+      return null;
+    });
+}
 
-const tmpl = (label = "", color = "#6699cc") => `
-  <div class="sw-row">
-    <input class="sw-label" placeholder="Label" value="${label}" />
-    <input class="sw-color" type="color" value="${color}" />
-    <button class="sw-remove">✕</button>
-  </div>
-`;
+const root = document.getElementById("swatches-root");
 
 function init() {
   if (!root) return;
 
   root.innerHTML = `
     <div class="sw-controls">
-      <div id="sw-list"></div>
-      <button id="sw-add">Add Color</button>
-      <button id="sw-render">Render</button>
+      <div class="sw-field">
+        <label>Source</label>
+        <select id="sw-source"></select>
+      </div>
+      <div class="sw-field">
+        <label>Palette</label>
+        <select id="sw-scheme"></select>
+      </div>
     </div>
     <div class="sw-output">
       <img id="sw-preview" />
     </div>
   `;
 
-  const listEl = document.getElementById("sw-list");
   const previewEl = document.getElementById("sw-preview");
+  const sourceEl = document.getElementById("sw-source");
+  const schemeEl = document.getElementById("sw-scheme");
 
-  document.getElementById("sw-add").onclick = () => addRow(listEl);
-  document.getElementById("sw-render").onclick = () => render(listEl, previewEl);
-
-  listEl.addEventListener("click", (e) => {
-    if (e.target.classList.contains("sw-remove")) {
-      e.target.closest(".sw-row").remove();
-    }
-  });
-
-  // seed a couple rows
-  addRow(listEl, "C", "#99ccff");
-  addRow(listEl, "G", "#ffcc66");
-  render(listEl, previewEl);
-}
-
-function addRow(listEl, label = "", color = "#6699cc") {
-  const div = document.createElement("div");
-  div.innerHTML = tmpl(label, color);
-  listEl.appendChild(div.firstElementChild);
-}
-
-function render(listEl, previewEl) {
-  const colors = Array.from(listEl.querySelectorAll(".sw-row")).map((row) => {
-    const label = row.querySelector(".sw-label").value || "";
-    const hex = row.querySelector(".sw-color").value;
-    return { label, hex };
-  });
-
-  fetch("/swatches/render", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ colors })
-  })
+  fetch("/swatches/palettes")
     .then((r) => r.json())
-    .then(({ image }) => {
-      if (image) previewEl.src = image;
+    .then(({ sources = [], palettes = {} }) => {
+      if (!sources || sources.length === 0) return;
+
+      sources.forEach((src) => {
+        const opt = document.createElement("option");
+        opt.value = src;
+        opt.textContent = src;
+        sourceEl.appendChild(opt);
+      });
+
+      sourceEl.onchange = () => {
+        populateSchemes(palettes, sourceEl.value, schemeEl, previewEl);
+        loadScheme(previewEl, schemeEl.value, sourceEl.value);
+      };
+
+      populateSchemes(palettes, sources[0], schemeEl, previewEl);
+      loadScheme(previewEl, schemeEl.value, sourceEl.value);
     })
     .catch((err) => console.error(err));
+}
+
+function populateSchemes(palettes, source, schemeEl, previewEl) {
+  schemeEl.innerHTML = "";
+  const names = palettes[source] || [];
+  names.forEach((name) => {
+    const opt = document.createElement("option");
+    opt.value = name;
+    opt.textContent = name;
+    schemeEl.appendChild(opt);
+  });
+  if (names.length > 0) {
+    schemeEl.value = names[0];
+    schemeEl.onchange = () => loadScheme(previewEl, schemeEl.value, source);
+  }
+}
+
+function loadScheme(previewEl, name, source) {
+  if (!name) return;
+  const qs = source ? `?source=${encodeURIComponent(source)}` : "";
+  fetch(`/swatches/palette/${encodeURIComponent(name)}${qs}`)
+    .then((r) => r.json())
+    .then(({ values, colors, name: schemeName, source: schemeSource }) => {
+      render(previewEl, schemeName, schemeSource || source);
+    })
+    .catch((err) => console.error(err));
+}
+
+function render(previewEl, schemeLabel, source) {
+  const select = document.getElementById("sw-scheme");
+  const name = schemeLabel || (select && select.value);
+  if (!name) return;
+
+  renderSwatches({ name, source }).then((image) => {
+    if (image) previewEl.src = image;
+  });
 }
 
 init();

@@ -2,6 +2,7 @@ defmodule BlendendPlayground.Router do
   use Plug.Router
 
   alias BlendendPlayground.{Examples, Render}
+  alias BlendendPlayground.Palette
 
   plug(Plug.Logger)
 
@@ -105,18 +106,45 @@ defmodule BlendendPlayground.Router do
 
   post "/swatches/render" do
     case conn.body_params do
-      %{"colors" => colors} ->
-        case BlendendPlayground.Swatches.render(colors) do
-          {:ok, base64} ->
-            json(conn, %{ok: true, image: "data:image/png;base64," <> base64})
+      %{"name" => name} = params ->
+        source = Map.get(params, "source")
 
-          {:error, reason} ->
-            json(conn, %{ok: false, error: inspect(reason)})
+        scheme =
+          try do
+            Palette.scheme_info(name, source)
+          rescue
+            ArgumentError -> nil
+          end
+
+        if scheme do
+          swatch_resp(conn, scheme)
+        else
+          json(conn, %{ok: false, error: "not_found"})
         end
 
       _ ->
         json(conn, %{ok: false, error: "invalid_params"})
     end
+  end
+
+  get "/swatches/palettes" do
+    json(conn, %{sources: Palette.scheme_sources(), palettes: Palette.palettes_by_source()})
+  end
+
+  get "/swatches/palette/:name" do
+    source = conn.params["source"]
+
+    info =
+      try do
+        case Palette.scheme_info(name, source) do
+          %{} = scheme -> Map.from_struct(scheme)
+          _ -> %{name: name, colors: []}
+        end
+      rescue
+        _ -> %{name: name, colors: []}
+      end
+
+    json(conn, info)
   end
 
   # -------- helpers --------
@@ -180,6 +208,16 @@ defmodule BlendendPlayground.Router do
       </body>
     </html>
     """
+  end
+
+  defp swatch_resp(conn, scheme) do
+    case BlendendPlayground.Swatches.render(scheme) do
+      {:ok, base64} ->
+        json(conn, %{ok: true, image: "data:image/png;base64," <> base64})
+
+      {:error, reason} ->
+        json(conn, %{ok: false, error: inspect(reason)})
+    end
   end
 
   # fallback

@@ -1,0 +1,1 @@
+function t(n){return fetch("/swatches/render",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(n)}).then(e=>e.json()).then(({image:e})=>e).catch(e=>(console.error(e),null))}export{t as renderSwatches};
