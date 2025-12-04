@@ -2,8 +2,8 @@
     "name": "blendend-playground-assets",
     "private": true,
     "scripts": {
-      "build": "npx esbuild playground.js --bundle --format=esm --minify --outfile=../priv/static/assets/app.js",
-      "dev": "npx esbuild playground.js --bundle --format=esm --sourcemap --watch --outfile=../priv/static/assets/app.js"
+    "build": "npx esbuild playground.js swatches.js --bundle --format=esm --minify --outdir=../priv/static/assets",
+    "dev": "npx esbuild playground.js swatches.js --bundle --format=esm --sourcemap --watch --outdir=../priv/static/assets"
     },
     "devDependencies": {
       "esbuild": "^0.27.0",

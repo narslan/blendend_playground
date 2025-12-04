@@ -25,6 +25,10 @@ defmodule BlendendPlayground.Router do
     send_resp(conn, 200, index_html())
   end
 
+  get "/swatches" do
+    send_resp(conn, 200, swatches_html())
+  end
+
   # -------- examples API --------
 
   # list all examples
@@ -93,7 +97,25 @@ defmodule BlendendPlayground.Router do
         json(conn, %{ok: false, error: "missing code"})
 
       {:error, reason} ->
-        json(conn, %{ok: false, error: to_string(reason)})
+        json(conn, %{ok: false, error: inspect(reason)})
+    end
+  end
+
+  # -------- swatches API --------
+
+  post "/swatches/render" do
+    case conn.body_params do
+      %{"colors" => colors} ->
+        case BlendendPlayground.Swatches.render(colors) do
+          {:ok, base64} ->
+            json(conn, %{ok: true, image: "data:image/png;base64," <> base64})
+
+          {:error, reason} ->
+            json(conn, %{ok: false, error: inspect(reason)})
+        end
+
+      _ ->
+        json(conn, %{ok: false, error: "invalid_params"})
     end
   end
 
@@ -123,7 +145,37 @@ defmodule BlendendPlayground.Router do
       </head>
       <body>
         <main class="layout">
+          <nav class="top-nav">
+            <a href="/">Playground</a>
+            <a href="/swatches">Swatches</a>
+          </nav>
           <div id="playground-root"></div>
+        </main>
+      </body>
+    </html>
+    """
+  end
+
+  defp swatches_html do
+    """
+    <!doctype html>
+    <html>
+      <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>Blendend Swatches</title>
+        <link rel="stylesheet" href="/assets/dark.min.css">
+        <link rel="stylesheet" href="/assets/style.css">
+        <link rel="stylesheet" href="/assets/swatches.css">
+        <script type="module" src="/assets/swatches.js"></script>
+      </head>
+      <body>
+        <main class="layout">
+          <nav class="top-nav">
+            <a href="/">Playground</a>
+            <a href="/swatches">Swatches</a>
+          </nav>
+          <div id="swatches-root"></div>
         </main>
       </body>
     </html>

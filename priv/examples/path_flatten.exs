@@ -14,9 +14,9 @@ draw width, height do
   bg = rgb(0x2e,0x31,0x38)
   clear(fill: bg)
 
-  font = load_font("priv/fonts/Alegreya-Regular.otf", 320)
+  font = load_font("priv/fonts/Alegreya-Regular.otf", 120)
    
-  letter = "iEx"
+  letter = "Mona"
   gb =
     GlyphBuffer.new!()
     |> GlyphBuffer.set_utf8_text!(letter)
@@ -26,8 +26,8 @@ draw width, height do
 
   mtx =
     Matrix2D.identity!()
-    |> Matrix2D.translate!(width * 0.001, height * 0.72)
-    |> Matrix2D.scale!(1.8, 1.8)
+    |> Matrix2D.translate!(width * 0.01, height * 0.56)
+    |> Matrix2D.scale!(2.8, 2.8)
 
   path =
     Path.new!()
@@ -40,7 +40,6 @@ draw width, height do
   
   spacing = 10.0
   flat = Path.flatten!(path, 0.8)
-
 
 
   flat
@@ -79,7 +78,7 @@ draw width, height do
     # occasional blossom along the flare
     if :rand.uniform() < 0.6 do
       petals = 5
-      petal_r0 = rand_between(2.0, 4.0)
+      petal_r0 = rand_between(1.0, 2.0)
       petal_r1 = petal_r0 * rand_between(2.6, 4.2)
       center_x = x + nx * rand_between(2.0, 6.0)
       center_y = y + ny * rand_between(2.0, 6.0)

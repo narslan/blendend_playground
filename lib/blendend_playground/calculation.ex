@@ -18,7 +18,7 @@ defmodule BlendendPlayground.Calculation do
       raise ArgumentError, "cannot map with zero input range"
     end
 
-    out_min + ((value - in_min) / in_span) * out_span
+    out_min + (value - in_min) / in_span * out_span
   end
 
   @doc """

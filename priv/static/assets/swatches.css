@@ -1,0 +1,30 @@
+#swatches-root {
+  padding: 16px;
+  width: 100%;
+  display: flex;
+  gap: 16px;
+}
+
+.sw-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 320px;
+}
+
+.sw-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.sw-row input[type="color"] {
+  width: 48px;
+  height: 32px;
+  padding: 0;
+}
+
+.sw-output img {
+  max-width: 640px;
+  border: 1px solid #444;
+}
