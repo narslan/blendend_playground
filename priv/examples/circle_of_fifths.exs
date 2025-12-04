@@ -3,7 +3,7 @@ alias BlendendPlayground.Palette
 
 width = 1500
 height = 1500
-draw 1500, 1500 do
+draw width, height do
   clear(fill: rgb(250, 250, 250, 250))
 
   #set_comp_op :pin_light                        
@@ -13,20 +13,12 @@ draw 1500, 1500 do
   staff_scale = 23.0
   line_spacing = staff_scale * 0.5
   note_step = line_spacing / 2.0
-  # colors 
-  #palette = Palette.scheme(:random)
-
-  #staff_color = Enum.random(palette)
-  #accidental_color = Enum.random(palette)
-  #clef_color = Enum.random(palette) 
-  #major_label_color = Enum.random(palette) 
-  #minor_label_color = Enum.random(palette) 
   
   staff_color = hsv(125, 0.4, 0.8)
   accidental_color = hsv(125, 0.1, 0.3)
   clef_color = hsv(100, 1.0, 0.1, 250) 
-  major_label_color = hsv(300, 0.9, 0.55, 200) 
-  minor_label_color = hsv(30, 0.5, 0.15, 200)
+  major_label_color = hsv(200, 0.9, 0.9, 200) 
+  minor_label_color = hsv(0, 0.9, 0.6, 200)
     
   
   center_x = width/2
@@ -217,7 +209,7 @@ draw 1500, 1500 do
 
       
       text label_font, -half_w + 24, label_y - line_spacing * 9.6, major_label, fill: major_label_color
-      text label_font, -half_w + 34, label_y + line_spacing * 6.6, minor_label, fill: minor_label_color
+      text label_font, -half_w + 34, label_y + line_spacing * 4.6, minor_label, fill: minor_label_color
     end
   end)
 end

@@ -21,8 +21,6 @@ defmodule BlendendPlayground.Demos.DaisyField do
       end)
       |> Enum.shuffle()
 
-    # petal_colors = scheme(:hokusai_blue)
-    # center_colors = scheme(:mono)
     fill_color = rand_pick(@petal_colors) |> hex_color()
 
     Enum.each(petals, fn %{x: px, y: py, w: pw, a: pa} ->
@@ -146,7 +144,6 @@ defmodule BlendendPlayground.Demos.DaisyField do
   defp rand_pick(list), do: Enum.random(list)
 
   defp rand_nested do
-    # product of uniforms ≈ random(random(random(random()))) in p5
     :rand.uniform() * :rand.uniform() * :rand.uniform() * :rand.uniform()
   end
 

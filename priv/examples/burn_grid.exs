@@ -1,9 +1,8 @@
-# Port of https://openprocessing.org/sketch/855987 to Blendend.
+# Port of https://openprocessing.org/sketch/855987 to blendend.
 # Exercises blend modes (burn), gradients, and soft blur shadows.
-alias BlendendPlayground.Palette 
-defmodule BlendendPlayground.Demos.BurnGrid do
- 
+alias BlendendPlayground.Palette
 
+defmodule BlendendPlayground.Demos.BurnGrid do
   def noise_overlay(w, h) do
     points =
       for _ <- 1..round(w * h * 0.1) do
@@ -12,12 +11,11 @@ defmodule BlendendPlayground.Demos.BurnGrid do
 
     fn ->
       Enum.each(points, fn {x, y, weight} ->
-        set_stroke_width weight
+        set_stroke_width(weight)
         line(x, y, x + 1, y + 1)
       end)
     end
   end
-
 
   def to_path(points) do
     {path, started?} =
@@ -36,15 +34,15 @@ end
 w = 800
 h = 800
 alias BlendendPlayground.Demos.BurnGrid, as: Demo
-palette = Palette.scheme(:burn_grid_demo)  
+palette = Palette.scheme(:burn_grid_demo)
 noise = Demo.noise_overlay(w, h)
- 
+
 draw w, h do
   # base background
   clear(fill: hsv(:rand.uniform(360), 0.05, 0.95))
 
   set_comp_op(:color_burn)
-  
+
   disable_style(:stroke)
 
   layers = 5
@@ -65,14 +63,15 @@ draw w, h do
         if :rand.uniform(100) > 33 do
           [c1, c2, c3] = Enum.take_random(palette, 3)
 
-          grad = radial_gradient -d / 2, -d / 2, 0, -d / 2, -d / 2, d * 2 do
-            add_stop 0.0, c1
-            add_stop 0.5, c2
-            add_stop 1.0, c3
-          end
-          
-          set_fill_style grad
-            
+          grad =
+            radial_gradient -d / 2, -d / 2, 0, -d / 2, -d / 2, d * 2 do
+              add_stop(0.0, c1)
+              add_stop(0.5, c2)
+              add_stop(1.0, c3)
+            end
+
+          set_fill_style(grad)
+
           shape =
             cond do
               :rand.uniform(100) > 50 ->
@@ -84,9 +83,9 @@ draw w, h do
 
           path = Demo.to_path(shape)
 
-          shadow_path(path, 0.0, 0.0, w / 40.0, fill: Enum.random(palette),  resolution: 0.4)
-          
-          polygon shape
+          shadow_path(path, 0.0, 0.0, w / 40.0, fill: Enum.random(palette), resolution: 0.4)
+
+          polygon(shape)
         end
       end
     end
@@ -94,6 +93,6 @@ draw w, h do
 
   # back to normal comp, draw noise overlay
   set_comp_op(:src_over)
- 
+
   noise.()
 end
