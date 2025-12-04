@@ -6,6 +6,7 @@ defmodule BlendendPlayground.Application do
     :ok = BlendendPlayground.Palette.init_cache()
 
     children = [
+      BlendendPlayground.Fonts,
       {Plug.Cowboy, scheme: :http, plug: BlendendPlayground.Router, options: [port: 4000]}
     ]
 

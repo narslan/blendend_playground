@@ -2,6 +2,7 @@ defmodule BlendendPlayground.Router do
   use Plug.Router
 
   alias BlendendPlayground.{Examples, Render}
+  alias BlendendPlayground.{FontPreview, Fonts}
   alias BlendendPlayground.Palette
 
   plug(Plug.Logger)
@@ -28,6 +29,10 @@ defmodule BlendendPlayground.Router do
 
   get "/swatches" do
     send_resp(conn, 200, swatches_html())
+  end
+
+  get "/fonts" do
+    send_resp(conn, 200, fonts_html())
   end
 
   # -------- examples API --------
@@ -147,6 +152,32 @@ defmodule BlendendPlayground.Router do
     json(conn, info)
   end
 
+  # -------- fonts API --------
+
+  get "/fonts/list" do
+    fonts = Fonts.all()
+    json(conn, %{ok: true, fonts: fonts})
+  end
+
+  post "/fonts/preview" do
+    case conn.body_params do
+      %{"font_id" => font_id} = params ->
+        with {:ok, variation} <- Fonts.lookup(font_id, Map.get(params, "style")),
+             {:ok, base64} <- FontPreview.render(variation, params) do
+          json(conn, %{ok: true, image: "data:image/png;base64," <> base64})
+        else
+          {:error, :not_found} ->
+            json(conn, %{ok: false, error: "font_not_found"})
+
+          {:error, reason} ->
+            json(conn, %{ok: false, error: inspect(reason)})
+        end
+
+      _ ->
+        json(conn, %{ok: false, error: "invalid_params"})
+    end
+  end
+
   # -------- helpers --------
 
   defp json(conn, map) do
@@ -176,6 +207,7 @@ defmodule BlendendPlayground.Router do
           <nav class="top-nav">
             <a href="/">Playground</a>
             <a href="/swatches">Swatches</a>
+            <a href="/fonts">Font Manager</a>
           </nav>
           <div id="playground-root"></div>
         </main>
@@ -202,8 +234,36 @@ defmodule BlendendPlayground.Router do
           <nav class="top-nav">
             <a href="/">Playground</a>
             <a href="/swatches">Swatches</a>
+            <a href="/fonts">Font Manager</a>
           </nav>
           <div id="swatches-root"></div>
+        </main>
+      </body>
+    </html>
+    """
+  end
+
+  defp fonts_html do
+    """
+    <!doctype html>
+    <html>
+      <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>Blendend Fonts</title>
+        <link rel="stylesheet" href="/assets/dark.min.css">
+        <link rel="stylesheet" href="/assets/style.css">
+        <script type="module" src="/assets/app.js"></script>
+        <script type="module" src="/assets/font_manager.js"></script>
+      </head>
+      <body>
+        <main class="layout">
+          <nav class="top-nav">
+            <a href="/">Playground</a>
+            <a href="/swatches">Swatches</a>
+            <a href="/fonts">Font Manager</a>
+          </nav>
+          <div id="fonts-root"></div>
         </main>
       </body>
     </html>
