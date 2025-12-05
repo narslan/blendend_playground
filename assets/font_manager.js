@@ -60,7 +60,12 @@ function layout() {
               </label>
             </div>
 
-            <div class="font-preview-variations" data-role="variation-chips"></div>
+            <div class="font-preview-variations">
+              <label class="control">
+                <span>Variation</span>
+                <select data-role="variation-select"></select>
+              </label>
+            </div>
 
             <div class="font-preview-output">
               <img data-role="preview-img" alt="font preview" style="display:none" />
@@ -85,7 +90,7 @@ function cacheDom() {
   dom.filterInput = root.querySelector('[data-role="filter-input"]');
   dom.sampleInput = root.querySelector('[data-role="sample-input"]');
   dom.sizeInput = root.querySelector('[data-role="size-input"]');
-  dom.variationChips = root.querySelector('[data-role="variation-chips"]');
+  dom.variationSelect = root.querySelector('[data-role="variation-select"]');
   dom.previewImg = root.querySelector('[data-role="preview-img"]');
   dom.previewPlaceholder = root.querySelector('[data-role="preview-placeholder"]');
   dom.previewMeta = root.querySelector('[data-role="preview-meta"]');
@@ -107,6 +112,18 @@ function attachHandlers() {
     state.fontSize = Number(e.target.value) || 48;
     schedulePreview();
   });
+
+  if (dom.variationSelect) {
+    dom.variationSelect.addEventListener("change", (e) => {
+      state.selectedStyle = e.target.value || null;
+      const font = state.fonts.find((f) => f.id === state.selectedFontId);
+      if (font) {
+        renderVariations(font);
+        renderMeta(font);
+        renderPreview();
+      }
+    });
+  }
 }
 
 function hydrateInputs() {
@@ -145,13 +162,7 @@ function renderFontList() {
     card.className = "font-card";
     card.type = "button";
     card.dataset.fontId = font.id;
-    card.innerHTML = `
-      <div class="font-card__title">${font.family}</div>
-      <div class="font-card__meta">${font.variations
-        .map((v) => v.style)
-        .join(", ")}</div>
-      <div class="font-card__path">${font.variations[0]?.path || ""}</div>
-    `;
+    card.innerHTML = `<div class="font-card__title">${font.family}</div>`;
 
     if (font.id === state.selectedFontId) {
       card.classList.add("font-card--active");
@@ -179,24 +190,26 @@ function selectFont(font) {
 }
 
 function renderVariations(font) {
-  if (!dom.variationChips) return;
-  dom.variationChips.innerHTML = "";
+  if (!dom.variationSelect) return;
+  dom.variationSelect.innerHTML = "";
 
-  (font.variations || []).forEach((variation) => {
-    const chip = document.createElement("button");
-    chip.type = "button";
-    chip.className = "font-chip";
-    chip.textContent = `${variation.style} · ${variation.weight}`;
-    if (variation.style === state.selectedStyle) {
-      chip.classList.add("font-chip--active");
-    }
-    chip.addEventListener("click", () => {
-      state.selectedStyle = variation.style;
-      renderVariations(font);
-      renderPreview();
-    });
-    dom.variationChips.appendChild(chip);
+  const variations = font.variations || [];
+  variations.forEach((variation) => {
+    const option = document.createElement("option");
+    option.value = variation.style;
+    option.textContent = `${variation.style} · ${variation.weight}`;
+    option.selected = variation.style === state.selectedStyle;
+    dom.variationSelect.appendChild(option);
   });
+
+  if (variations.length === 0) {
+    const placeholder = document.createElement("option");
+    placeholder.textContent = "No variations found";
+    placeholder.value = "";
+    dom.variationSelect.appendChild(placeholder);
+  }
+
+  dom.variationSelect.disabled = variations.length === 0;
 }
 
 function renderMeta(font) {
