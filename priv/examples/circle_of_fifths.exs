@@ -1,30 +1,32 @@
-# circle of fifths
+# circle of fifths, 
 alias BlendendPlayground.Palette
 
 width = 1500
 height = 1500
 draw width, height do
+
   clear(fill: rgb(250, 250, 250, 250))
 
   #set_comp_op :pin_light                        
   music_font = load_font("priv/fonts/BravuraText.otf", 60)
-  label_font = load_font("priv/fonts/Alegreya-Regular.otf",52.0)
+  label_font_size = 52.0
+  label_font = load_font("priv/fonts/Alegreya-Regular.otf", label_font_size)
   
   staff_scale = 23.0
   line_spacing = staff_scale * 0.5
   note_step = line_spacing / 2.0
   
-  staff_color = hsv(125, 0.4, 0.8)
-  accidental_color = hsv(125, 0.1, 0.3)
-  clef_color = hsv(100, 1.0, 0.1, 250) 
-  major_label_color = hsv(200, 0.9, 0.9, 200) 
-  minor_label_color = hsv(0, 0.9, 0.6, 200)
-    
-  
+  staff_color = hsv(0, 0, 0)
+  accidental_color = hsv(247, 0.6, 0.21)
+  clef_color = staff_color 
+  major_label_color = hsv(176, 0.75, 0.44) 
+  minor_label_color = hsv(350, 0.57, 0.88)
+
+
   center_x = width/2
   center_y = height/2
   base_radius = 400.0
-  
+
   # Glyphs for accidentals.
   sharp = <<0xE262::utf8>>
   flat = <<0xE260::utf8>>
@@ -47,28 +49,27 @@ draw width, height do
   # Positions (in half-line steps) relative to the middle line (B). Positive is upward.
   pitch_y_steps = %{
     b_flat: -6.0,
-    b: -6.0,
-    b_sharp: -6.0,
+    b_sharp: -2.5,
     b_double_flat: -6.0,
+    
     c_flat: -5.0,
-    c: -5.0,
-    c_sharp: -5.0,
+    c_sharp: -2.0,
+    
     d_flat: -4.0,
-    d: -4.0,
-    d_sharp: -4.0,
+    d_sharp: -2.0,
+    
     e_flat: -3.0,
-    e: -3.0,
-    e_sharp: -3.0,
+    e_sharp: -0.5,
+    
     f_flat: -9.0,
-    f: -2.0,
-    f_sharp: -2.0,
+    f_sharp: 0.0,
     f_double_sharp: -2.0,
+    
     g_flat: -8.0,
-    g: -1.0,
-    g_sharp: -1.0,
+    g_sharp: 0.5,
+    
     a_flat: -7.0,
-    a: -7.0,
-    a_sharp: -7.0
+    a_sharp: -5.0
   }
 
   # Key definitions as pitch lists.
@@ -117,12 +118,12 @@ draw width, height do
     "a",
     "e",
     "b",
-    "f#",
-    "c#",
-    "g#",
-    "d#",
-    "a#",
-    "e#",
+    "f sharp",
+    "c sharp",
+    "g sharp",
+    "d sharp",
+    "a sharp",
+    "e sharp",
     "d flat",
     "a flat",
     "e flat",
@@ -137,6 +138,68 @@ draw width, height do
   clef_x_offset = staff_scale - 10
   key_start_offset = staff_scale * 2
   base_staff_width = 100.0
+  format_label =
+    fn key_name, letter_case ->
+      key =
+        key_name
+        |> String.replace("_", " ")
+        |> String.trim()
+        |> String.downcase()
+
+      letter =
+        key
+        |> String.first()
+        |> case do
+          nil -> ""
+          l when letter_case == :upper -> String.upcase(l)
+          l -> String.downcase(l)
+        end
+
+      accidental =
+        cond do
+          String.contains?(key, "double sharp") -> double_sharp
+          String.contains?(key, "double flat") or String.contains?(key, "double_flat") -> double_flat
+          String.contains?(key, "sharp") -> sharp
+          String.contains?(key, "flat") -> flat
+          true -> ""
+        end
+
+      {letter, accidental}
+    end
+
+  horizontal_offset =
+    fn accidental, letter_case ->
+      base = label_font_size * (if letter_case == :lower, do: 0.48, else: 0.52)
+
+      cond do
+        accidental == sharp -> base + label_font_size * 0.1
+        accidental == flat -> base + label_font_size * 0.2
+        true -> base
+      end
+    end
+
+  vertical_offset =
+    fn accidental ->
+      cond do
+        accidental == sharp -> -label_font_size * 0.08
+        accidental == flat -> label_font_size * 0.5 
+        true -> 0.0
+      end
+    end
+
+  draw_label =
+    fn x, y, key_name, letter_case, color ->
+      {letter, accidental} = format_label.(key_name, letter_case)
+      text label_font, x, y, letter, fill: color
+
+      if accidental != "" do
+        text music_font,
+          x + horizontal_offset.(accidental, letter_case),
+          y + vertical_offset.(accidental),
+          accidental,
+          fill: color
+      end
+    end
 
   Enum.with_index(key_order)
   |> Enum.each(fn {key, idx} ->
@@ -167,12 +230,12 @@ draw width, height do
         y = offset
         line staff_left, y, staff_right, y,
           stroke: staff_color,
-          stroke_width: 2.0
+          stroke_width: 1.0
       end)
 
       # G clef.
       clef_x = staff_left + clef_x_offset
-      clef_y = staff_scale * 1.4
+      clef_y = staff_scale 
 
       text music_font, clef_x, clef_y, <<0xE050::utf8>>, fill: clef_color
 
@@ -198,18 +261,16 @@ draw width, height do
       end)
 
       # Labels anchored to the rotated group so they share orientation.
-      major_label =
-        Atom.to_string(key)
-        |> String.capitalize()
-        |> String.replace("_", " ")
-        |> String.replace("major", " ")
-
-      minor_label = Enum.at(minor_key_order, idx)
+      major_key = Atom.to_string(key)
+      minor_key = Enum.at(minor_key_order, idx)
+           
       label_y = line_spacing * 4.5
 
+      draw_label.(-half_w + 24, label_y - line_spacing * 9.6, major_key, :upper, major_label_color)
+      draw_label.(-half_w + 34, label_y + line_spacing * 4.6, minor_key, :lower, minor_label_color)
+
       
-      text label_font, -half_w + 24, label_y - line_spacing * 9.6, major_label, fill: major_label_color
-      text label_font, -half_w + 34, label_y + line_spacing * 4.6, minor_label, fill: minor_label_color
+    
     end
   end)
 end
