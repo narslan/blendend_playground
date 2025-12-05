@@ -35,10 +35,10 @@ w = 800
 h = 800
 alias BlendendPlayground.Demos.BurnGrid, as: Demo
 palette =
-  "burn_grid_demo"
-  |> Palette.palette_by_name()
+  Palette.palette_by_name("takamo.burn_grid_demo")
   |> Map.get(:colors, [])
-  |> Palette.from_hex_list()
+  |> Palette.from_hex_list_hsv()
+  |> Enum.map(fn {h, s, v} -> hsv(h, s, v) end)
 noise = Demo.noise_overlay(w, h)
 
 draw w, h do
@@ -86,8 +86,9 @@ draw w, h do
             end
 
           path = Demo.to_path(shape)
+          random_color = Enum.random(palette)
 
-          shadow_path(path, 0.0, 0.0, w / 40.0, fill: Enum.random(palette), resolution: 0.4)
+          shadow_path(path, 0.0, 0.0, w / 40.0, fill: random_color, resolution: 0.4)
 
           polygon(shape)
         end

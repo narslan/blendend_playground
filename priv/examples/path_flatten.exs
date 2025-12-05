@@ -13,7 +13,8 @@ draw width, height do
     "random"
     |> Palette.palette_by_name()
     |> Map.get(:colors, [])
-    |> Palette.from_hex_list()
+    |> Palette.from_hex_list_rgb()
+    |> Enum.map(fn {r, g, b} -> rgb(r, g, b) end)
   
   bg = rgb(0x2e,0x31,0x38)
   clear(fill: bg)

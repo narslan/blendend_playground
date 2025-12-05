@@ -14,8 +14,6 @@ defmodule BlendendPlayground.Palette do
   """
 
   alias BlendendPlayground.Palette.Scheme
-  alias Blendend.Style.Color
-
   @table :palette_cache
 
   @doc """
@@ -190,11 +188,11 @@ defmodule BlendendPlayground.Palette do
 
   # --- legacy wrappers / conversions ---
   @doc """
-  Converts a list of hex strings into `Blendend.Style.Color` structs.
+  Converts a list of hex strings into RGB triples `{r, g, b}`.
   """
-  @spec from_hex_list([String.t()]) :: [Color.t()]
-  def from_hex_list(hex_list) when is_list(hex_list) do
-    Enum.map(hex_list, &hex_to_color/1)
+  @spec from_hex_list_rgb([String.t()]) :: [{non_neg_integer(), non_neg_integer(), non_neg_integer()}]
+  def from_hex_list_rgb(hex_list) when is_list(hex_list) do
+    Enum.map(hex_list, &hex_to_rgb/1)
   end
 
   @doc """
@@ -293,14 +291,6 @@ defmodule BlendendPlayground.Palette do
   defp normalize_source(source) when is_atom(source), do: Atom.to_string(source)
   defp normalize_source(source) when is_binary(source), do: source
   defp normalize_source(_), do: nil
-
-  defp hex_to_color("#" <> <<r::binary-size(2), g::binary-size(2), b::binary-size(2)>>) do
-    Color.rgb!(
-      String.to_integer(r, 16),
-      String.to_integer(g, 16),
-      String.to_integer(b, 16)
-    )
-  end
 
   defp normalize_hue(h) when h < 0.0, do: h + 360.0
   defp normalize_hue(h), do: h

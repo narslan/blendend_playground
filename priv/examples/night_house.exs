@@ -194,12 +194,10 @@ draw width, height do
   w = height / 10 / 1.5
   h = height * 2
   noise_scale = 0.1
-  palette =
-    "takamo.VanGogh"
-    |> Palette.palette_by_name()
+  palette =Palette.fetch_random_palette("takamo")
     |> Map.get(:colors, [])
     |> Palette.from_hex_list_hsv()
-
+    
   
   set_comp_op(:multiply)
 
