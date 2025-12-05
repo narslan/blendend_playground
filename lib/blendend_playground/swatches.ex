@@ -25,7 +25,12 @@ defmodule BlendendPlayground.Swatches do
 
       draw_result =
         draw width, height do
-          clear(fill: rgb(245, 245, 245))
+          if scheme.background do
+            {r, g, b} = hex_to_rgb(scheme.background)
+            clear(fill: rgb(r, g, b))
+          else
+            clear(fill: rgb(245, 245, 245))
+          end
 
           font_path = priv_font_path("Alegreya-Regular.otf")
           monospace = load_font(font_path, 12)
@@ -35,6 +40,15 @@ defmodule BlendendPlayground.Swatches do
 
           text(sans_bold, width * 0.5, height * 0.1, "#{width} x #{height}", fill: rgb(0, 0, 0))
           text(sans_bold, width * 0.05, height * 0.1, label, fill: rgb(0, 0, 0))
+
+          stroke_color =
+            if scheme.stroke do
+              IO.inspect(scheme.stroke)
+              {r, g, b} = hex_to_rgb(scheme.stroke)
+              rgb(r, g, b)
+            else
+              rgb(0, 0, 0)
+            end
 
           Enum.with_index(scheme.colors, fn color, idx ->
             row = div(idx, @cols_per_row)
@@ -49,10 +63,10 @@ defmodule BlendendPlayground.Swatches do
             rect(x, y, @box - @pad, @box - @pad, fill: rgb(r, g, b))
 
             text(monospace, x + 6, y + @box, "hsv: #{h_disp}, #{s_disp}, #{v_disp}",
-              fill: rgb(0, 0, 0)
+              fill: stroke_color
             )
 
-            text(monospace, x + 6, y + @box + 20, "rgb: #{r}, #{g}, #{b}", fill: rgb(0, 0, 0))
+            text(monospace, x + 6, y + @box + 20, "rgb: #{r}, #{g}, #{b}", fill: stroke_color)
           end)
         end
 

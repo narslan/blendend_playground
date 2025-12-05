@@ -25,7 +25,8 @@ draw 800, 800 do
   Palette.palette_by_name("takamo.VanGogh")
   |> Map.get(:colors, [])
   |> Palette.from_hex_list_rgb()
-  |> Enum.map(fn c -> rgb(c) end)
+  |> Enum.map(fn {r, g, b} -> rgb(r, g, b) end)
+  
   
   grad =
     linear_gradient 150, 150, 360, 360 do

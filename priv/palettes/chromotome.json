@@ -328,14 +328,14 @@
       "#9dc35e",
       "#f0a1a1"
     ],
-    "stroke": "#fff",
+    "stroke": "#ffffff",
     "background": "#000000",
     "source": "exposito"
   },
   {
     "name": "exposito_sub1",
     "colors": ["#8bc9c3", "#ffae43", "#ea432c", "#524e9c"],
-    "stroke": "#fff",
+    "stroke": "#ffffff",
     "background": "#000000",
     "source": "exposito"
   },
@@ -349,14 +349,14 @@
       "#f0a1a1",
       "#228345"
     ],
-    "stroke": "#fff",
+    "stroke": "#ffffff",
     "background": "#000000",
     "source": "exposito"
   },
   {
     "name": "exposito_sub3",
     "colors": ["#ffae43", "#ea432c", "#524e9c", "#f0a1a1"],
-    "stroke": "#fff",
+    "stroke": "#ffffff",
     "background": "#000000",
     "source": "exposito"
   },
@@ -801,7 +801,7 @@
     "name": "mayo1",
     "colors": ["#ea510e", "#ffd203", "#0255a3", "#039177", "#111111"],
     "stroke": "#111111",
-    "background": "#fff",
+    "background": "#ffffff",
     "source": "mayo"
   },
   {
@@ -982,7 +982,7 @@
     "name": "kaffeprat",
     "colors": ["#BCAA8C", "#D8CDBE", "#484A42", "#746B58", "#9A8C73"],
     "stroke": "#000",
-    "background": "#fff",
+    "background": "#ffffff",
     "source": "misc"
   },
   {
@@ -1045,14 +1045,14 @@
     "name": "san ramon",
     "colors": ["#4f423a", "#f6a74b", "#589286", "#f8e9e2", "#2c2825"],
     "stroke": "#2c2825",
-    "background": "#fff",
+    "background": "#ffffff",
     "source": "misc"
   },
   {
     "name": "one-dress",
     "colors": ["#1767D2", "#FFFFFF", "#F9AB00", "#212121"],
     "stroke": "#212121",
-    "background": "#fff",
+    "background": "#ffffff",
     "source": "misc"
   },
   {
@@ -1386,21 +1386,21 @@
     "name": "system.#01",
     "colors": ["#ff4242", "#fec101", "#1841fe", "#fcbdcc", "#82e9b5"],
     "stroke": "#000",
-    "background": "#fff",
+    "background": "#ffffff",
     "source": "system"
   },
   {
     "name": "system.#02",
     "colors": ["#ff4242", "#ffd480", "#1e365d", "#edb14c", "#418dcd"],
     "stroke": "#000",
-    "background": "#fff",
+    "background": "#ffffff",
     "source": "system"
   },
   {
     "name": "system.#03",
     "colors": ["#f73f4a", "#d3e5eb", "#002c3e", "#1aa1b1", "#ec6675"],
     "stroke": "#110b09",
-    "background": "#fff",
+    "background": "#ffffff",
     "source": "system"
   },
   {
@@ -1421,28 +1421,28 @@
     "name": "system.#05",
     "colors": ["#db4549", "#d1e1e1", "#3e6a90", "#2e3853", "#a3c9d3"],
     "stroke": "#000",
-    "background": "#fff",
+    "background": "#ffffff",
     "source": "system"
   },
   {
     "name": "system.#06",
     "colors": ["#e5475c", "#95b394", "#28343b", "#f7c6a3", "#eb8078"],
     "stroke": "#000",
-    "background": "#fff",
+    "background": "#ffffff",
     "source": "system"
   },
   {
     "name": "system.#07",
     "colors": ["#d75c49", "#f0efea", "#509da4"],
     "stroke": "#000",
-    "background": "#fff",
+    "background": "#ffffff",
     "source": "system"
   },
   {
     "name": "system.#08",
     "colors": ["#f6625a", "#92b29f", "#272c3f"],
     "stroke": "#000",
-    "background": "#fff",
+    "background": "#ffffff",
     "source": "system"
   },
   {
