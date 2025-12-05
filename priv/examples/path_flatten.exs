@@ -9,7 +9,7 @@ height = 800
 
 draw width, height do
  
-  palette =
+ palette =
     "random"
     |> Palette.palette_by_name()
     |> Map.get(:colors, [])
@@ -31,13 +31,12 @@ draw width, height do
 
   mtx =
     Matrix2D.identity!()
-    |> Matrix2D.translate!(width * 0.01, height * 0.56)
+    |> Matrix2D.translate!(width * 0.001, height * 0.56)
     |> Matrix2D.scale!(2.8, 2.8)
 
   path =
     Path.new!()
     |> Font.get_glyph_run_outlines!(font, run, mtx)  
-
 
   fill_path(path, fill: bg)
  # shadow_path(path, 10.0, 10.0, 10.0, fill: rgb(0x0,0x0,0x68, 100))

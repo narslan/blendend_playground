@@ -20,8 +20,13 @@ const state = {
 alias BlendendPlayground.Palette
 
 draw 800, 800 do
-  [c1, c2, c3, c4, c5] = Palette.scheme(:vangogh)
-
+  
+  [c1, c2, c3, c4, c5] =
+  Palette.palette_by_name("takamo.VanGogh")
+  |> Map.get(:colors, [])
+  |> Palette.from_hex_list_rgb()
+  |> Enum.map(fn c -> rgb(c) end)
+  
   grad =
     linear_gradient 150, 150, 360, 360 do
       add_stop(0.0, c1)

@@ -3,7 +3,7 @@ const state = {
   filter: "",
   selectedFontId: null,
   selectedStyle: null,
-  sampleText: "Aa Bb Cc · The quick brown fox jumps over the lazy dog",
+  sampleText: "Hamburgefonts . 0123",
   fontSize: 48,
   previewImage: "",
   error: "",

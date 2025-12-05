@@ -16,8 +16,8 @@ defmodule BlendendPlayground.FontPreview do
         draw @width, @height do
           clear(fill: rgb(14, 14, 16))
 
-          {:ok, font} = load_font(path, size)
-          {:ok, label_font} = load_font(path, label_size(size))
+          font = load_font(path, size)
+          label_font = load_font(path, label_size(size))
 
           text(font, 36, @height * 0.58, text, fill: rgb(238, 238, 238))
 
