@@ -9,6 +9,8 @@ defmodule BlendendPlayground.Palette do
 
   Palettes are loaded from `priv/palettes/*.json` at startup.
   Each palette carries a `source` tag so the frontend can filter by source then scheme.
+  Palette names and sources are strings; prefer calls like
+  `Palette.palette_by_name("VanGogh", "takamo")` or `Palette.palette_by_name("takamo.VanGogh")`.
   """
 
   alias BlendendPlayground.Palette.Scheme
@@ -38,84 +40,161 @@ defmodule BlendendPlayground.Palette do
   end
 
   @doc """
-  Returns a list of `Blendend.Style.Color` structs for a scheme.
+  Fetch a palette by name.
+
+  Accepts `"source.name"`, `{name, source}`, or `"random"`. Names and sources
+  should be strings; atoms are still accepted for compatibility.
   """
-  @spec scheme(atom() | String.t(), String.t() | nil) :: [Color.t()]
-  def scheme(name, source \\ nil) do
-    scheme_hex(name, source) |> Enum.map(&hex_to_color/1)
+  @spec palette_by_name(String.t() | atom(), String.t() | atom() | nil) :: Scheme.t()
+  def palette_by_name(name, source \\ nil)
+
+  def palette_by_name(name, source) when name in [:random, "random"] and is_list(source),
+    do: fetch_random_palette(source)
+
+  def palette_by_name(name, source) when name in [:random, "random"] do
+    source
+    |> pick_source_for_random()
+    |> fetch_random_palette()
+  end
+
+  def palette_by_name(name, source) when is_atom(name) do
+    palette_by_name(Atom.to_string(name), source)
+  end
+
+  def palette_by_name(<<_::binary>> = name, source) do
+    {src, palette_name} = split_source_and_name(name, source)
+    src = normalize_source(src)
+    palette_name = normalize_name(palette_name)
+
+    case lookup_scheme(palette_name, src) do
+      {:ok, scheme} ->
+        scheme
+
+      {:error, {:ambiguous, sources}} ->
+        raise ArgumentError,
+              "palette #{palette_name} is available in multiple sources: #{Enum.join(sources, ", ")}; please specify a source"
+
+      {:error, :not_found} ->
+        raise ArgumentError, "palette not found: #{inspect({src || :any, palette_name})}"
+    end
   end
 
   @doc """
-  Returns a list of hex strings for a scheme.
+  List palette structs for a given source.
   """
-  @spec scheme_hex(atom() | String.t(), String.t() | nil) :: [String.t()]
-  def scheme_hex(name, source \\ nil) do
-    palette_lookup!(name, source).colors
+  @spec palettes_by_source(String.t() | atom()) :: [Scheme.t()]
+  def palettes_by_source(source) do
+    source = normalize_source(source)
+
+    if source do
+      ensure_cache()
+
+      :ets.match_object(@table, {{source, :_}, :_})
+      |> Enum.map(fn {_, scheme} -> scheme end)
+      |> Enum.sort_by(& &1.name)
+    else
+      []
+    end
   end
 
   @doc """
-  Returns palette metadata.
-  """
-  @spec scheme_info(atom() | String.t(), String.t() | nil) :: Scheme.t()
-  def scheme_info(name, source \\ nil) do
-    palette_lookup!(name, source)
-  end
-
-  @doc """
-  Lists available scheme names. If `source` is provided, filters by source.
-  """
-  @spec scheme_names(String.t() | nil) :: [String.t()]
-  def scheme_names(source \\ nil) do
-    ensure_cache()
-
-    :ets.match_object(@table, {{source || :_, :_}, :_})
-    |> Enum.map(fn {{src, name}, _} -> {src, name} end)
-    |> Enum.filter(fn {src, _} -> is_nil(source) or src == source end)
-    |> Enum.map(fn {_src, name} -> name end)
-    |> Enum.uniq()
-  end
-
-  @doc """
-  Lists available sources (strings).
-  """
-  @spec scheme_sources() :: [String.t()]
-  def scheme_sources do
-    ensure_cache()
-
-    :ets.match_object(@table, {{:_, :_}, :_})
-    |> Enum.map(fn {{src, _}, _} -> src end)
-    |> Enum.uniq()
-  end
-
-  @doc """
-  Returns map of source => [palette names].
+  Index of available palette names grouped by source.
   """
   @spec palettes_by_source() :: %{String.t() => [String.t()]}
   def palettes_by_source do
     ensure_cache()
 
-    :ets.match_object(@table, {{:_, :_}, :_})
-    |> Enum.reduce(%{}, fn {{src, name}, _}, acc ->
+    :ets.tab2list(@table)
+    |> Enum.reduce(%{}, fn {{src, name}, _scheme}, acc ->
       Map.update(acc, src, [name], &[name | &1])
     end)
-    |> Enum.into(%{}, fn {src, names} -> {src, Enum.uniq(names) |> Enum.sort()} end)
+    |> Enum.into(%{}, fn {src, names} -> {src, names |> Enum.uniq() |> Enum.sort()} end)
   end
 
+  @doc """
+  Lists available sources (strings).
+  """
+  @spec palette_sources() :: [String.t()]
+  def palette_sources do
+    palettes_by_source()
+    |> Map.keys()
+    |> Enum.sort()
+  end
+
+  @doc """
+  Pick a palette out of a collection or via ETS lookup.
+  """
+  @spec fetch_palette([Scheme.t()] | String.t() | atom(), atom() | String.t()) :: Scheme.t()
+  def fetch_palette(palette_collection, name) when is_list(palette_collection) do
+    palette_name = normalize_name(name)
+
+    case Enum.find(palette_collection, fn %Scheme{name: n} -> n == palette_name end) do
+      nil -> raise ArgumentError, "palette not found in collection: #{inspect(palette_name)}"
+      scheme -> scheme
+    end
+  end
+
+  def fetch_palette(source, name) when is_binary(source) or is_atom(source) do
+    palette_by_name(name, source)
+  end
+
+  @doc """
+  Choose a random palette from a source or collection.
+  """
+  @spec fetch_random_palette() :: Scheme.t()
+  def fetch_random_palette do
+    ensure_cache()
+
+    case :ets.tab2list(@table) do
+      [] -> raise ArgumentError, "no palettes available"
+      list -> list |> Enum.random() |> elem(1)
+    end
+  end
+
+  @spec fetch_random_palette([Scheme.t()] | String.t() | atom()) :: Scheme.t()
+  def fetch_random_palette(palette_collection) when is_list(palette_collection) do
+    if Enum.empty?(palette_collection) do
+      raise ArgumentError, "no palettes available"
+    else
+      Enum.random(palette_collection)
+    end
+  end
+
+  def fetch_random_palette(source) when is_binary(source) or is_atom(source) do
+    source
+    |> normalize_source()
+    |> case do
+      nil ->
+        fetch_random_palette()
+
+      src ->
+        src
+        |> palettes_by_source()
+        |> case do
+          [] -> fetch_random_palette()
+          list -> fetch_random_palette(list)
+        end
+    end
+  end
+
+  @doc """
+  Returns a random palette source.
+  """
+  @spec fetch_random_source() :: String.t()
+  def fetch_random_source do
+    case palette_sources() do
+      [] -> raise ArgumentError, "no palette sources available"
+      sources -> Enum.random(sources)
+    end
+  end
+
+  # --- legacy wrappers / conversions ---
   @doc """
   Converts a list of hex strings into `Blendend.Style.Color` structs.
   """
   @spec from_hex_list([String.t()]) :: [Color.t()]
   def from_hex_list(hex_list) when is_list(hex_list) do
     Enum.map(hex_list, &hex_to_color/1)
-  end
-
-  @doc """
-  Returns HSV triples `{h, s, v}` for a scheme.
-  """
-  @spec scheme_hsv(atom() | String.t(), String.t() | nil) ::
-          [{number(), number(), number()}]
-  def scheme_hsv(name, source \\ nil) do
-    palette_lookup!(name, source).colors |> Enum.map(&hex_to_hsv/1)
   end
 
   @doc """
@@ -154,39 +233,66 @@ defmodule BlendendPlayground.Palette do
     {String.to_integer(r, 16), String.to_integer(g, 16), String.to_integer(b, 16)}
   end
 
-  defp random_scheme_key do
+  # --- internals ---
+
+  defp lookup_scheme(name, source) do
     ensure_cache()
 
-    case :ets.tab2list(@table) do
-      [] -> raise ArgumentError, "no palettes available"
-      list -> list |> Enum.random() |> elem(1) |> Map.get(:name)
-    end
-  end
+    cond do
+      is_binary(source) ->
+        case :ets.lookup(@table, {source, name}) do
+          [{_, scheme}] ->
+            {:ok, scheme}
 
-  defp normalize_key(:random), do: random_scheme_key()
-  defp normalize_key(atom) when is_atom(atom), do: Atom.to_string(atom)
-  defp normalize_key(<<_::binary>> = str), do: str
-
-  defp palette_lookup!(name, source) do
-    ensure_cache()
-
-    name = normalize_key(name)
-    src = source || :_
-
-    case :ets.match_object(@table, {{src, name}, :_}) do
-      [] when source != nil ->
-        raise ArgumentError, "palette not found: #{inspect({source, name})}"
-
-      [] ->
-        case :ets.match_object(@table, {{:_, name}, :_}) do
-          [] -> raise ArgumentError, "palette not found: #{inspect(name)}"
-          [{{_, _}, scheme} | _] -> scheme
+          _ ->
+            lookup_scheme(name, nil)
         end
 
-      [{{_, _}, scheme} | _] ->
-        scheme
+      true ->
+        matches = :ets.match_object(@table, {{:_, name}, :_})
+
+        case matches do
+          [] ->
+            {:error, :not_found}
+
+          [{{_, _}, scheme}] ->
+            {:ok, scheme}
+
+          list ->
+            sources =
+              list
+              |> Enum.map(fn {{src, _}, _} -> src end)
+              |> Enum.uniq()
+              |> Enum.sort()
+
+            {:error, {:ambiguous, sources}}
+        end
     end
   end
+
+  defp split_source_and_name(name, source) do
+    normalized_source = normalize_source(source)
+    parts = String.split(name, ".", parts: 2)
+
+    case {normalized_source, parts} do
+      {nil, [src, rest]} -> {src, rest}
+      {src, [candidate, rest]} when candidate == src -> {src, rest}
+      {_parts, src} when is_binary(src) -> {src, name}
+      _ -> {nil, name}
+    end
+  end
+
+  defp pick_source_for_random(source) when is_binary(source) or is_list(source), do: source
+  defp pick_source_for_random(source) when is_atom(source), do: Atom.to_string(source)
+  defp pick_source_for_random(_), do: fetch_random_source()
+
+  defp normalize_name(name) when is_atom(name), do: Atom.to_string(name)
+  defp normalize_name(<<_::binary>> = name), do: name
+
+  defp normalize_source(source) when source in [nil, ""], do: nil
+  defp normalize_source(source) when is_atom(source), do: Atom.to_string(source)
+  defp normalize_source(source) when is_binary(source), do: source
+  defp normalize_source(_), do: nil
 
   defp hex_to_color("#" <> <<r::binary-size(2), g::binary-size(2), b::binary-size(2)>>) do
     Color.rgb!(

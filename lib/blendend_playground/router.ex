@@ -116,7 +116,7 @@ defmodule BlendendPlayground.Router do
 
         scheme =
           try do
-            Palette.scheme_info(name, source)
+            Palette.palette_by_name(name, source)
           rescue
             ArgumentError -> nil
           end
@@ -133,7 +133,7 @@ defmodule BlendendPlayground.Router do
   end
 
   get "/swatches/palettes" do
-    json(conn, %{sources: Palette.scheme_sources(), palettes: Palette.palettes_by_source()})
+    json(conn, %{sources: Palette.palette_sources(), palettes: Palette.palettes_by_source()})
   end
 
   get "/swatches/palette/:name" do
@@ -141,7 +141,7 @@ defmodule BlendendPlayground.Router do
 
     info =
       try do
-        case Palette.scheme_info(name, source) do
+        case Palette.palette_by_name(name, source) do
           %{} = scheme -> Map.from_struct(scheme)
           _ -> %{name: name, colors: []}
         end

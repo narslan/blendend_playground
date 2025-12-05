@@ -21,3 +21,6 @@
 - This project is released under the MIT License (see `LICENSE`).
 - `blend2d` is licensed under the zlib license.
 - `priv/fonts/Alegreya-Regular.otf` is distributed under the SIL Open Font License.
+- [Chromotome Palettes](https://github.com/kgolid/chromotome)  is distributed under MIT License
+
+

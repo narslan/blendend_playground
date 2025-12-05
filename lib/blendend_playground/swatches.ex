@@ -28,8 +28,8 @@ defmodule BlendendPlayground.Swatches do
           clear(fill: rgb(245, 245, 245))
 
           font_path = priv_font_path("Alegreya-Regular.otf")
-          {:ok, monospace} = load_font(font_path, 12)
-          {:ok, sans_bold} = load_font(font_path, 20)
+          monospace = load_font(font_path, 12)
+          sans_bold = load_font(font_path, 20)
 
           label = scheme.name |> String.replace("_", " ") |> String.capitalize()
 

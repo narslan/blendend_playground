@@ -34,7 +34,11 @@ end
 w = 800
 h = 800
 alias BlendendPlayground.Demos.BurnGrid, as: Demo
-palette = Palette.scheme(:burn_grid_demo)
+palette =
+  "burn_grid_demo"
+  |> Palette.palette_by_name()
+  |> Map.get(:colors, [])
+  |> Palette.from_hex_list()
 noise = Demo.noise_overlay(w, h)
 
 draw w, h do
