@@ -10,7 +10,7 @@ defmodule BlendendPlayground.Fonts do
   use GenServer
 
   @table :blendend_fonts
-  @font_exts ~w(.otf .ttf .ttc .woff .woff2)
+  @font_exts ~w(.otf .ttf)
 
   # Client API
 
