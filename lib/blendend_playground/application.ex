@@ -3,7 +3,9 @@ defmodule BlendendPlayground.Application do
 
   @impl true
   def start(_type, _args) do
+    {:ok, _} = Application.ensure_all_started(:blendend)
     :ok = BlendendPlayground.Palette.init_cache()
+    _ = BlendendPlayground.Swatches.warm_fonts()
 
     children = [
       BlendendPlayground.Fonts,
