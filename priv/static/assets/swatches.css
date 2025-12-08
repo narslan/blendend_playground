@@ -1,0 +1,43 @@
+#swatches-root {
+  padding: 16px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+  gap: 16px;
+  min-height: 0;
+  flex: 1;
+}
+
+.sw-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sw-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.sw-row input[type="color"] {
+  width: 64px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid #666;
+  background: #222;
+}
+
+.sw-output img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #444;
+  display: block;
+}
+
+.sw-output {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding-top: 8px;
+}
