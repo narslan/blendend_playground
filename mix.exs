@@ -29,7 +29,8 @@ defmodule BlendendPlayground.MixProject do
     [
       blendend_dep,
       {:plug_cowboy, "~> 2.7"},
-      {:perlin, "~> 0.1.0"}
+      {:perlin, "~> 0.1.0"},
+      {:table, "~> 0.1.2"}
     ]
   end
 end
