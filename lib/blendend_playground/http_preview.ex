@@ -78,6 +78,6 @@ defmodule BlendendPlayground.HttpPreview do
   end
 
   defp encode(map) do
-    JSON.encode!(map)
+    Jason.encode!(map)
   end
 end

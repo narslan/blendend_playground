@@ -190,7 +190,9 @@ defmodule BlendendPlayground.Palette do
   @doc """
   Converts a list of hex strings into RGB triples `{r, g, b}`.
   """
-  @spec from_hex_list_rgb([String.t()]) :: [{non_neg_integer(), non_neg_integer(), non_neg_integer()}]
+  @spec from_hex_list_rgb([String.t()]) :: [
+          {non_neg_integer(), non_neg_integer(), non_neg_integer()}
+        ]
   def from_hex_list_rgb(hex_list) when is_list(hex_list) do
     Enum.map(hex_list, &hex_to_rgb/1)
   end
@@ -325,7 +327,7 @@ defmodule BlendendPlayground.Palette do
 
   defp load_file_palettes(path) do
     with {:ok, body} <- File.read(path),
-         {:ok, data} <- JSON.decode(body) do
+         {:ok, data} <- Jason.decode(body) do
       normalize_palettes(data, Path.basename(path, ".json"))
     else
       err ->
