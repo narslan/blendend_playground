@@ -20,14 +20,8 @@ defmodule BlendendPlayground.MixProject do
   end
 
   defp deps do
-    blendend_dep =
-      case System.get_env("BLENDEND_LOCAL") do
-        "1" -> {:blendend, path: "../blendend"}
-        _ -> {:blendend, github: "narslan/blendend"}
-      end
-
     [
-      blendend_dep,
+      {:blendend, "~> 0.1.0"},
       {:plug_cowboy, "~> 2.7"},
       {:perlin, "~> 0.1.0"},
       {:jason, "~> 1.4"}
