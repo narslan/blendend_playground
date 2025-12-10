@@ -23,13 +23,13 @@ defmodule Tabela do
       id: 484,
       inserted_at: "2017-03-27 14:42:34.095202Z",
       key: "9194A82EF4BB0123",
-      message: "long message: Hello, my dear!"
+      message: "long message: Hello, my friend!"
     },
     %{
       id: 1494,
       inserted_at: "2017-03-27 14:42:34.095202Z",
       key: "9194A82EF4BB0123",
-      message: "long message: Hallo, meine Liebe! Herzlich willkommen!"
+      message: "long message: Hallo, my friends. Welcome!"
     }
   ]
 
@@ -54,8 +54,8 @@ columns_in_order =
 
 largest_cells =
   Enum.map(columns_in_order, fn {key, values} ->
-    largest = Enum.max([key | values])
-    {key, Tabela.text_bounding_box(font, "#{largest}")}
+    largest = List.last(values)
+    {key, Tabela.text_bounding_box(font, to_string(largest))}
   end)
 
 height = 800
@@ -80,7 +80,7 @@ width = trunc(max(400, trunc(total_width) + origin_x * 2))
 
 draw width, height do
   clear(fill: rgb(255, 255, 255))
-
+  line_color = rgb(48, 41, 86)
   # Horizontal lines and table height
   {row_lines, table_height} =
     Tabela.row_data()
@@ -90,37 +90,37 @@ draw width, height do
     end)
 
   # Top border
-  line(origin_x, origin_y, origin_x + width, origin_y,
-    stroke: rgb(0, 0, 255),
+  line(origin_x, origin_y, origin_x + total_width, origin_y,
+    stroke: line_color,
     stroke_width: 2.0
   )
 
   Enum.each(row_lines, fn y ->
-    line(origin_x, y, origin_x + width, y,
-      stroke: rgb(0, 0, 255),
+    line(origin_x, y, origin_x + total_width, y,
+      stroke: line_color,
       stroke_width: 2.0
     )
   end)
 
   # Vertical lines with accumulated width and labels
   # Left border + per-column lines + right border
-  line(origin_x, origin_y, origin_x, origin_y + table_height,
-    stroke: rgb(0, 0, 255),
+  line(origin_x, origin_y, origin_x, origin_y + table_height ,
+    stroke: line_color,
     stroke_width: 2.0
   )
 
   Enum.each(col_lines, fn {label, x_start, x_end} ->
-    text(font, x_start + 4, origin_y + line_height * 0.7, Atom.to_string(label))
+    text(font, x_start + 8, origin_y + line_height * 0.7, to_string(label))
 
     line(x_end, origin_y, x_end, origin_y + table_height,
-      stroke: rgb(0, 0, 255),
+      stroke: line_color,
       stroke_width: 2.0
     )
   end)
 
   # Right border (after last column)
   line(final_x, origin_y, final_x, origin_y + table_height,
-    stroke: rgb(0, 0, 255),
+    stroke: line_color,
     stroke_width: 2.0
   )
 

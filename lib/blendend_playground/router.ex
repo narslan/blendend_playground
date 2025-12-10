@@ -16,7 +16,7 @@ defmodule BlendendPlayground.Router do
   plug(Plug.Parsers,
     parsers: [:json, :urlencoded],
     pass: ["*/*"],
-    json_decoder: JSON
+    json_decoder: Jason
   )
 
   plug(:match)
@@ -181,7 +181,7 @@ defmodule BlendendPlayground.Router do
   # -------- helpers --------
 
   defp json(conn, map) do
-    body = JSON.encode!(map)
+    body = Jason.encode!(map)
 
     conn
     |> put_resp_content_type("application/json")
