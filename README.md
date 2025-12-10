@@ -24,21 +24,6 @@ cd assets
 pnpm run build 
 ```
 
-## Using sublime backend
-
-If you're a Sublime Text user, you can edit blendend scripts in the comfort of your editor and send them to the playground for a quick preview.
-
-1. Copy `sublime_plugin/blendend_preview.py` under "~/.config/sublime-text/Packages/User/"
-2. Start the server: `BLENDEND_PREVIEW=1 iex -S mix`
-3. In Sublime, run the command via the console: `window.run_command("blendend_preview")`, or assign a key binding:
-   ```json
-   {
-     "keys": ["ctrl+shift+e"],
-     "command": "blendend_preview"
-   }
-   ```
-4. The plugin POSTs the current file path, waits for render, and opens tmp/preview.png.
-
 ## Licenses
 
 - This project is released under the MIT License (see `LICENSE`).
