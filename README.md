@@ -28,4 +28,5 @@ pnpm run build
 - `blend2d` is licensed under the zlib license.
 - The fonts under `priv/fonts/` are distributed under the SIL Open Font License.
 - [Chromotome Palettes](https://github.com/kgolid/chromotome) is distributed under MIT License.
-- More palettes are taken from takawo's sketches (https://openprocessing.org/user/6533) 
+- More palettes are taken from takawo's sketches (https://openprocessing.org/user/6533) are released under https://creativecommons.org/licenses/by-nc-sa/3.0/
+- [Water.css](https://github.com/kognise/water.css) is released under the MIT License.

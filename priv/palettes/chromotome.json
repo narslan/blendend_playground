@@ -890,7 +890,7 @@
   {
     "name": "butterfly",
     "colors": ["#f40104", "#f6c0b3", "#99673a", "#f0f1f4"],
-    "stroke": "#191e36",
+    "stroke": "#f0f1f4",
     "background": "#191e36",
     "source": "misc"
   },
