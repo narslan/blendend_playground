@@ -21,7 +21,7 @@ defmodule BlendendPlayground.MixProject do
 
   defp deps do
     [
-      {:blendend, "~> 0.1.0"},
+      {:blendend, path: "../blendend"},
       {:plug_cowboy, "~> 2.7"},
       {:perlin, "~> 0.1.0"},
       {:jason, "~> 1.4"}
