@@ -1,4 +1,5 @@
 # This a draft for table drawing.
+alias BlendendPlayground.Palette
 defmodule Tabela do
   @moduledoc false
 
@@ -29,7 +30,7 @@ defmodule Tabela do
       id: 1494,
       inserted_at: "2017-03-27 14:42:34.095202Z",
       key: "9194A82EF4BB0123",
-      message: "long message: Hallo, my friends. Welcome!"
+      message: "long message: Hallo, my friends.!"
     }
   ]
 
@@ -41,9 +42,9 @@ defmodule Tabela do
 end
 
 alias Blendend.Text.{Face, Font, Layout}
-face_file = "priv/fonts/MapleMono-Regular.otf"
+face_file = "priv/fonts/AlegreyaSans-Regular.otf"
 face = Face.load!(face_file)
-font = Font.create!(face, 20)
+font = Font.create!(face, 13)
 line_height = Layout.line_height(font)
 
 cells = Tabela.row_data() |> Table.to_columns()
@@ -79,8 +80,24 @@ total_width = final_x - origin_x
 width = trunc(max(400, trunc(total_width) + origin_x * 2))
 
 draw width, height do
-  clear(fill: rgb(255, 255, 255))
+
+   [bg | palette] =
+    Palette.palette_by_name("takamo.VanGogh")
+    |> Map.get(:colors, [])
+    |> Palette.from_hex_list_rgb()
+    |> Enum.map(fn {r, g, b} -> rgb(r, g, b) end)
+  
+  clear(fill: bg)
+
+   
+  
   line_color = rgb(48, 41, 86)
+
+  h_gap = 10
+for x <- 1..div(width, 40) do
+  line x * h_gap, 0, x * h_gap , height
+end 
+  
   # Horizontal lines and table height
   {row_lines, table_height} =
     Tabela.row_data()
