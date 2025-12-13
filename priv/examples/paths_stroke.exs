@@ -1,9 +1,8 @@
 # Paths.Stroke Example from https://fiddle.blend2d.com/.
-# Shows filling a complex path then stroking it with a different comp op for layered outlines.
+# Shows filling a path then stroking it with a different comp op for layered outlines.
 
 draw 600, 600 do
-  clear(fill: rgb(0, 0, 0))
-
+  
   path p do
     move_to(247, 97)
     line_to(247, 172)
@@ -16,6 +15,6 @@ draw 600, 600 do
   end
 
   fill_rule(:even_odd)
-  fill_path(p, fill: rgb(255, 255, 255))
-  stroke_path(p, stroke: rgb(255, 80, 0, 255), stroke_width: 3.0)
+  fill_path(p, fill: rgb(0xFF, 0xFF, 0xFF))
+  stroke_path(p, stroke: rgb(0xFF, 0x80, 0, 255), stroke_width: 3.0, comp_op: :xor)
 end
