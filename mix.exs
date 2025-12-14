@@ -21,12 +21,10 @@ defmodule BlendendPlayground.MixProject do
 
   defp deps do
     [
-      # {:scale, path: "../scale"},
-      # {:blendend, path: "../blendend"},
+      {:scale, github: "narslan/scale"},
       {:blendend, "~> 0.2.0"},
       {:plug_cowboy, "~> 2.7"},
       {:perlin, "~> 0.1.0"},
-      {:table, "~> 0.1.2"},
       {:jason, "~> 1.4"}
     ]
   end
