@@ -77,7 +77,7 @@ draw 600, 220 do
         base_y + uy0,
         base_x + ux1,
         base_y + uy1,
-        stroke: rgb(:random),
+        stroke: Blendend.Style.Color.random(),
         stroke_width: 1.5
   end)
 end

@@ -1,18 +1,23 @@
 
-# Welcome to the Blendend playground.
-# Pick an example to load it, tweak
-# and see the preview update.
-# Save as a new file with "Filename" + "New"; 
-# To the edit the current file use "Update".
 alias BlendendPlayground.Palette
-
+use Blendend.Draw
 draw 800, 800 do
   
-  [c1, c2, c3, c4, c5] =
+  palette =
   Palette.palette_by_name("takamo.VanGogh")
   |> Map.get(:colors, [])
   |> Palette.from_hex_list_rgb()
-  |> Enum.map(fn {r, g, b} -> rgb(r, g, b) end)
+  
+
+ scale = Scale.Ordinal.new(
+        domain: ["a", "b", "c", "d", "e"],
+        range: palette)
+ 
+  col = Scale.map(scale, "a")
+  IO.inspect(col)
+
+  
+  clear(fill: rgb(col))
   
  scale = Scale.Linear.new(
         domain: [0, 1],

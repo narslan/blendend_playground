@@ -54,7 +54,7 @@ draw 800, 400 do
       |> Matrix2D.translate!(gx, gy)
     path = Path.new!()
     :ok = Font.get_glyph_outlines!(font, gid, m, path)
-    Canvas.Fill.path(canvas, path, fill: rgb(:random))
+    Canvas.Fill.path(canvas, path, fill: Blendend.Style.Color.random())
     pen_before + adv
   end)
 end
