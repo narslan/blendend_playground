@@ -22,7 +22,7 @@ defmodule BlendendPlayground.MixProject do
   defp deps do
     [
       {:scale, github: "narslan/scale"},
-      {:blendend, "~> 0.2.0"},
+      {:blendend, "~> 0.3.0"},
       {:plug_cowboy, "~> 2.7"},
       {:perlin, "~> 0.1.0"},
       {:jason, "~> 1.4"}
