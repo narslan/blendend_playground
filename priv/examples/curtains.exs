@@ -44,38 +44,28 @@ defmodule BlendendPlayground.Demos.Curtains do
           grad_cy = :math.sin(deg_to_rad(l + angle_deg)) * brush_size / 4.0
           grad = Blendend.Style.Gradient.conic!(grad_cx, grad_cy, grad_angle)
 
-          n_arr =
+          values =
             seed_arr
             |> Enum.with_index()
             |> Enum.map(fn {seed, i} ->
-              %{
-                color: Enum.at(colors, i),
-                v: noise2(i * 1.0, 0.5 * l / len, seed)
-              }
+              v = noise2(i * 1.0, 0.5 * l / len, seed)
+              {v, Enum.at(colors, i)}
             end)
 
           {min_num, max_num} =
-            Enum.reduce(n_arr, {1.0, 0.0}, fn %{v: v}, {mn, mx} ->
+            Enum.reduce(values, {1.0, 0.0}, fn {v, _color}, {mn, mx} ->
               {min(mn, v), max(mx, v)}
             end)
 
-          n_arr
-          |> Enum.map(fn %{v: v, color: color} ->
-            stop =
-              if max_num == min_num do
-                0.5
-              else
-                map(v, min_num, max_num, 0.0, 1.0)
-              end
+          denom = max(max_num - min_num, 1.0e-12)
 
-            {stop, color}
+          values
+          |> Enum.map(fn {v, color} ->
+            {(v - min_num) / denom, color}
           end)
-          |> Enum.sort_by(fn {stop, _} -> stop end)
           |> Enum.each(fn {stop, color} ->
             Blendend.Style.Gradient.add_stop(grad, stop, color)
           end)
-
-          l_step = 1
 
           mat_line =
             matrix do
@@ -93,7 +83,7 @@ defmodule BlendendPlayground.Demos.Curtains do
           with_transform mat_line do
             line(0, -brush_size * n, 0, brush_size * n,
               stroke: grad,
-              stroke_width: l_step * 2.0,
+              stroke_width: 2.0,
               stroke_cap: :square,
               comp_op: :color_burn
             )
@@ -111,7 +101,7 @@ alias BlendendPlayground.Demos.Curtains
 draw width, height do
   bg = hsv(0, 0, 0.9)
   clear(fill: bg)
-            
+
   palette =
     Palette.fetch_random_palette("flourish")
     |> Map.get(:colors, [])
