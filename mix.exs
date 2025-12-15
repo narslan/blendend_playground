@@ -24,7 +24,6 @@ defmodule BlendendPlayground.MixProject do
       {:scale, github: "narslan/scale"},
       {:blendend, "~> 0.3.0"},
       {:plug_cowboy, "~> 2.7"},
-      {:perlin, "~> 0.1.0"},
       {:jason, "~> 1.4"}
     ]
   end

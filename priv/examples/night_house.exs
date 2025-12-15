@@ -111,7 +111,7 @@ defmodule BlendendPlayground.Demos.NightHouse do
       translate(x_translate_amount, w2)
       h2 = w / 2 * rand_between(0.5, 1)
       translate(w / 4, h2)
-      rect_center(0, 0, w / 4, h2, fill: hsv(h5, s5, v5))
+      rect_center(0, 0, w / 4, h2, fill: hsv(h5, s5, v5), comp_op: :color_burn)
     end
   end
 
@@ -149,7 +149,7 @@ draw width, height do
   clear(fill: gradient)
 
   # Star field: sample positions uniformly, then keep/brighten them based on
-  # Perlin noise so stars clump in brighter patches.
+  # signed value-noise so stars clump in brighter patches.
   star_seed = :rand.uniform() * 1000.0
   # Sample noise on a coarse grid and spawn stars per cell (much cheaper).
   cell = 32
@@ -165,7 +165,7 @@ draw width, height do
     horizon_falloff = map(cy, 0, max_y, 1.0, 0.65)
 
     n =
-      Perlin.noise(cx * noise_scale, cy * noise_scale, star_seed)
+      noise2_signed(cx * noise_scale, cy * noise_scale, star_seed)
       |> then(&((&1 + 1.0) / 2.0 * horizon_falloff))
 
     # Decide how many stars to place in this cell based on noise.
@@ -200,8 +200,12 @@ draw width, height do
     x_step_base = map(y, height / 4, height, w / 2, w * 3)
 
     NightHouse.walk_cols(0.0, width, fn -> x_step_base end, fn x, x_step ->
-      n_raw = Perlin.noise(x * noise_scale, y * noise_scale, 0.0)
-      ny = (n_raw + 1.0) / 2.0 * height / 2
+      n_raw = noise2_signed(x * noise_scale, y * noise_scale, 0.0)
+      # Value-noise has a wider distribution than classic Perlin; compress toward
+      # 0.5 to avoid overly tall houses.
+      t = (n_raw + 1.0) / 2.0
+      t = 0.5 + (t - 0.5) * 0.2
+      ny = t * height / 2
 
       h_step =
         map(y, height / 4, height, height / 100, height / 10) *

@@ -60,6 +60,36 @@ defmodule BlendendPlayground.Calculation.Macros do
     end
   end
 
+  defmacro dist(p1, p2) do
+    quote bind_quoted: [p1: p1, p2: p2] do
+      Calculation.dist(p1, p2)
+    end
+  end
+
+  defmacro noise2(x, y) do
+    quote bind_quoted: [x: x, y: y] do
+      Calculation.noise2(x, y)
+    end
+  end
+
+  defmacro noise2(x, y, seed) do
+    quote bind_quoted: [x: x, y: y, seed: seed] do
+      Calculation.noise2(x, y, seed)
+    end
+  end
+
+  defmacro noise2_signed(x, y) do
+    quote bind_quoted: [x: x, y: y] do
+      Calculation.noise2_signed(x, y)
+    end
+  end
+
+  defmacro noise2_signed(x, y, seed) do
+    quote bind_quoted: [x: x, y: y, seed: seed] do
+      Calculation.noise2_signed(x, y, seed)
+    end
+  end
+
   # trig helpers (radian input)
   defmacro sin(angle) do
     quote do
