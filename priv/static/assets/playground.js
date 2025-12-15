@@ -16,32 +16,25 @@ ${c}end`,p=l.from+u.length;return{range:X.cursor(p),changes:[{from:l.from,to:l.t
 # Pick an example to load it, tweak
 # and see the preview update.
 # Save as a new file with "Filename" + "New"; 
-# To the edit the current file use "Update".
 alias BlendendPlayground.Palette
-
 draw 800, 800 do
-  
-  [c1, c2, c3, c4, c5] =
-  Palette.palette_by_name("takamo.VanGogh")
-  |> Map.get(:colors, [])
-  |> Palette.from_hex_list_rgb()
-  |> Enum.map(fn {r, g, b} -> rgb(r, g, b) end)
-  
-  
+  colors = ["#424D8C", "#84A9BF", "#C1D9CE", "#F2B705", "#F25C05"]
+  colors = Palette.from_hex_list_rgb(colors)
+  # map domain [0..1] to respective distinct colors
+  s = Scale.Quantize.new(range: colors)
+
   grad =
-    linear_gradient 150, 150, 360, 360 do
-      add_stop(0.0, c1)
-      add_stop(0.25, c2)
-      add_stop(0.5, c3)
-      add_stop(0.75, c4)
-      add_stop(1.0, c5)
+    linear_gradient 0, 0, 400, 400 do
+      for i <- 0..4 do
+        add_stop(i / 4, rgb(Scale.map(s, i / 4)))
+      end
     end
 
   translate(200, 200)
-  round_rect(40, 40, 420, 320, 28, 28, fill: grad)
+  rect(0, 0, 400, 400, fill: grad)
 
   font = load_font("priv/fonts/Alegreya-Regular.otf", 48.0)
-  text(font, 80, 215, "Hello, blendend!", fill: rgb(40, 40, 40))
+  text(font, 40, 215, "Hello, blendend!", fill: rgb(40, 40, 40))
 end
   `,image:"",error:"",examples:[],filename:"",selectedExample:"",view:null,fontSize:null,previewTimeout:null,renderId:0},U={root:null,editorHost:null,renderButton:null,examplesSelect:null,fontSizeSelect:null,filenameInput:null,saveButton:null,updateButton:null,errorBox:null,previewImg:null,previewPlaceholder:null};function od(){U.root=document.getElementById("playground-root"),U.root&&(U.root.innerHTML=uX(),dX(),pX(),gX(),mX(),XX(),bX(),me(),ja(),ld(!0))}function uX(){return`
     <div class="playground">
