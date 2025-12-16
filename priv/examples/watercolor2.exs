@@ -10,7 +10,7 @@ defmodule BlendendPlayground.Demos.Watercolor2 do
     interpolate_passes: 6,
     update_passes: 5
   ]
-  
+
   def default_opts, do: @default_opts
 
   def init_points(width, ypos, opts \\ []) do
@@ -40,7 +40,7 @@ defmodule BlendendPlayground.Demos.Watercolor2 do
       Enum.map(acc, &move_nearby(&1, deviation))
     end)
   end
-   
+
   def polygon_points(points) do
     points
     |> Enum.map(fn {x, y, _z} -> {x, y} end)
@@ -54,9 +54,8 @@ defmodule BlendendPlayground.Demos.Watercolor2 do
         mid = generate_midpoint(p1, p2, sd)
         {[p2, mid | acc], p2}
       end)
-    rev
 
-  
+    rev
   end
 
   defp generate_midpoint({x1, y1, z1}, {x2, y2, z2}, sd) do
@@ -65,9 +64,9 @@ defmodule BlendendPlayground.Demos.Watercolor2 do
     z = (z1 + z2) / 2.0 * 0.45 * rand_between(0.1, 3.5)
     move_nearby({x, y, z}, sd)
   end
-              
+
   defp move_nearby({_, _, _} = pnt, sd) when sd == 0 or sd == 0.0, do: pnt
-   
+
   defp move_nearby({x, y, z}, sd) do
     stdev = abs(z * sd)
     {rand_gaussian(x, stdev), rand_gaussian(y, stdev), z}
@@ -93,9 +92,9 @@ draw width, height do
   |> Enum.each(fn ypos ->
     points = Watercolor2.init_points(width, ypos)
 
-    hue = :rand.uniform() * 360.0    
+    hue = :rand.uniform() * 360.0
     fill_color = hsv(hue, 1, 0.8)
-  
+
     Enum.each(1..42, fn _ ->
       current = Watercolor2.update(points)
 
