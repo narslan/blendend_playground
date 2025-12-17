@@ -27,8 +27,41 @@ draw 400, 400 do
   translate(100, 100)
 
   circle_color = Enum.random(palette)
-  
-  Stream.each(points, fn {x, y} -> circle(x, y, 3, fill: circle_color ) end)
+
+  Stream.each(points, fn {x, y} -> circle(x, y, 3, fill: circle_color) end)
   |> Stream.run()
-  
+
+  p0 = {110.0, 150.0}
+  c1 = {25.0, 190.0}
+  c2 = {210.0, 250.0}
+  p3 = {210.0, 30.0}
+
+  curve_color = Enum.random(palette)
+  curve_color2 = Enum.random(palette)
+
+  curve =
+    Path.new!()
+    |> Path.move_to!(elem(p0, 0), elem(p0, 1))
+    |> Path.cubic_to!(
+      elem(c1, 0),
+      elem(c1, 1),
+      elem(c2, 0),
+      elem(c2, 1),
+      elem(p3, 0),
+      elem(p3, 1)
+    )
+
+  curve2 =
+    Path.new!()
+    |> Path.move_to!(elem(p0, 0), elem(p0, 1))
+    |> Path.conic_to!(
+      elem(c1, 0),
+      elem(c1, 1),
+      elem(c2, 0),
+      elem(c2, 1),
+      1.0
+    )
+
+  stroke_path(curve, stroke: curve_color, stroke_width: 3.5, stroke_cap: :round)
+  fill_path(curve2, fill: curve_color2)
 end
