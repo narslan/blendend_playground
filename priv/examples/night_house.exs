@@ -103,14 +103,14 @@ defmodule BlendendPlayground.Demos.NightHouse do
           line_to(0, h)
           close()
         end
-
-      fill_path(p4, fill: grad4)
+  
+      fill_path(p4, fill: grad4, comp_op: :color_burn)
 
       {h5, s5, v5} = Enum.at(palette,  -2)
       x_translate_amount = if :rand.uniform() > 0.5, do: 0, else: w / 2
       translate(x_translate_amount, w2)
       h2 = w / 2 * rand_between(0.5, 1)
-      translate(w / 4, h2)
+      translate(w / 4, h2)   
       rect_center(0, 0, w / 4, h2, fill: hsv(h5, s5, v5), comp_op: :color_burn)
     end
   end
@@ -194,7 +194,7 @@ draw width, height do
     |> Map.get(:colors, [])
     |> Palette.from_hex_list_hsv()
   
-     
+             
   
   NightHouse.walk_rows(height / 4, height, fn y ->
     x_step_base = map(y, height / 4, height, w / 2, w * 3)
@@ -218,10 +218,10 @@ draw width, height do
 
     gradient2 =
       linear_gradient 0, y, 0, height do
-        add_stop(1.0, hsv(0, 0, 0, 1))
+        add_stop(1.0, hsv(0, 0, 0, 1))  
         add_stop(0.0, hsv(0, 0, 0, 0))
-      end
-    clear(fill: gradient2, comp_op: :plus)   
+      end     
+    clear(fill: gradient2)   
 
   end)
 end
