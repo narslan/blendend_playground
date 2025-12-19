@@ -54,7 +54,7 @@ defmodule BlendendPlayground.Fonts do
     end
   end
 
-  def refresh, do: GenServer.cast(__MODULE__, :refresh)
+  def refresh, do: GenServer.call(__MODULE__, :refresh)
 
   # Server callbacks
 
@@ -69,6 +69,12 @@ defmodule BlendendPlayground.Fonts do
   def handle_cast(:refresh, state) do
     load_fonts()
     {:noreply, state}
+  end
+
+  @impl true
+  def handle_call(:refresh, _from, state) do
+    load_fonts()
+    {:reply, :ok, state}
   end
 
   # Helpers
