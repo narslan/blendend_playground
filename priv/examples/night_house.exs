@@ -1,4 +1,5 @@
 # https://openprocessing.org/sketch/2497472
+use Blendend.Draw
 use BlendendPlayground.Calculation.Macros
 alias BlendendPlayground.Palette
 
@@ -26,22 +27,21 @@ defmodule BlendendPlayground.Demos.NightHouse do
         x1_temp = -rand_between(w / 15, w / 10)
         rect(w / 2, y0_temp, x1_temp, h, fill: c)
       end
-      
- 
+
       p =
         path do
           move_to(0, w2)
           line_to(w / 4, 0)
           line_to(w * 3 / 4, 0)
           line_to(w, w2)
-          line_to(w, h )
+          line_to(w, h)
           line_to(0, h)
           close()
         end
 
       fill_path(p, fill: hsv(0, 0, 1.0))
 
-      shadow_path(p, w/8, w/8, w / 3, fill: hsv(0, 0, 0, 33), resolution: 0.1)
+      shadow_path(p, w / 8, w / 8, w / 3, fill: hsv(0, 0, 0, 33), resolution: 0.1)
 
       # roof
       {ch, cs, cv} = Enum.at(palette, 0)
@@ -74,7 +74,7 @@ defmodule BlendendPlayground.Demos.NightHouse do
 
       p3 =
         path do
-          move_to(w / 2, w2 )
+          move_to(w / 2, w2)
           line_to(w, w2)
           line_to(w, h)
           line_to(w / 2, h)
@@ -84,7 +84,7 @@ defmodule BlendendPlayground.Demos.NightHouse do
       fill_path(p3, fill: grad3)
 
       # fascia 2
-
+      IO.inspect(palette)
       {h3, s3, v3} = Enum.at(palette, 2)
       {h4, s4, v4} = Enum.at(palette, 3)
 
@@ -103,14 +103,14 @@ defmodule BlendendPlayground.Demos.NightHouse do
           line_to(0, h)
           close()
         end
-  
+
       fill_path(p4, fill: grad4, comp_op: :color_burn)
 
-      {h5, s5, v5} = Enum.at(palette,  -2)
+      {h5, s5, v5} = Enum.at(palette, -2)
       x_translate_amount = if :rand.uniform() > 0.5, do: 0, else: w / 2
       translate(x_translate_amount, w2)
       h2 = w / 2 * rand_between(0.5, 1)
-      translate(w / 4, h2)   
+      translate(w / 4, h2)
       rect_center(0, 0, w / 4, h2, fill: hsv(h5, s5, v5), comp_op: :color_burn)
     end
   end
@@ -139,7 +139,6 @@ height = 800
 alias BlendendPlayground.Demos.NightHouse
 
 draw width, height do
-
   gradient =
     linear_gradient 0, 0, 0, height do
       add_stop(0.0, hsv(220, 0.8, 0.0))
@@ -184,18 +183,18 @@ draw width, height do
         radius = 0.6 + n * 1.2
         circle(x, y, radius, fill: rgb(255, 255, 255, alpha))
       end
-    end     
+    end
   end
 
   w = height / 10 / 1.5
   h = height * 2
   noise_scale = 0.1
-  palette =Palette.fetch_random_palette("takamo")
+
+  palette =
+    Palette.fetch_random_palette("artists")
     |> Map.get(:colors, [])
     |> Palette.from_hex_list_hsv()
-  
-             
-  
+
   NightHouse.walk_rows(height / 4, height, fn y ->
     x_step_base = map(y, height / 4, height, w / 2, w * 3)
 
@@ -212,16 +211,14 @@ draw width, height do
           if :rand.uniform() > 0.5, do: -1, else: 1
 
       NightHouse.draw_house(x, y + h_step + ny, x_step, h, palette)
-    
-      
-      end)
+    end)
 
     gradient2 =
       linear_gradient 0, y, 0, height do
-        add_stop(1.0, hsv(0, 0, 0, 1))  
+        add_stop(1.0, hsv(0, 0, 0, 1))
         add_stop(0.0, hsv(0, 0, 0, 0))
-      end     
-    clear(fill: gradient2)   
+      end
 
+    clear(fill: gradient2)
   end)
 end

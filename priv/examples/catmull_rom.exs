@@ -6,7 +6,7 @@ alias BlendendPlayground.Curves
 
 draw 400, 400 do
   [bg | palette] =
-    Palette.palette_by_name("takamo.VanGogh")
+    Palette.palette_by_name("artists.VanGogh")
     |> Map.get(:colors, [])
     |> Palette.from_hex_list_rgb()
     |> Enum.map(fn {r, g, b} -> rgb(r, g, b) end)

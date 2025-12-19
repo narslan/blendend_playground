@@ -11,7 +11,7 @@ defmodule BlendendPlayground.Demos.BurnGrid do
 
     fn ->
       Enum.each(points, fn {x, y, weight} ->
-        circle(x, y,  weight, fill: rgb(255, 255, 255, 200))
+        circle(x, y, weight, fill: rgb(255, 255, 255, 200))
       end)
     end
   end
@@ -35,7 +35,7 @@ h = 800
 alias BlendendPlayground.Demos.BurnGrid, as: Demo
 
 palette =
-  Palette.palette_by_name("takamo.burn_grid_demo")
+  Palette.palette_by_name("artists.burn_grid_demo")
   |> Map.get(:colors, [])
   |> Palette.from_hex_list_hsv()
   |> Enum.map(fn {h, s, v} -> hsv(h, s, v) end)
@@ -46,6 +46,7 @@ draw w, h do
   # base background
   clear(fill: hsv(:rand.uniform(360), 0.05, 0.95))
   layers = 5
+
   for _k <- 1..layers do
     offset = w / 15
     cells = :rand.uniform(10) + 1
@@ -68,30 +69,31 @@ draw w, h do
               add_stop(0.5, c2)
               add_stop(1.0, c3)
             end
-			
+
           rand_shape = :rand.uniform(100)
+
           shape =
             cond do
               rand_shape > 70 ->
                 [{-d / 2, -d / 2}, {0, -d / 2}, {d / 2, d / 2}, {0, d / 2}]
-             rand_shape > 30 and rand_shape < 70 ->
+
+              rand_shape > 30 and rand_shape < 70 ->
                 [{d / 2, -d / 2}, {0, -d / 2}, {-d / 2, d / 2}, {0, d / 2}]
+
               true ->
                 [{-d / 2, -d / 2}, {d / 2, -d / 2}, {d / 2, d / 2}]
             end
 
           path = Demo.to_path(shape)
           random_color = Enum.random(palette)
-             
-          polygon(shape, fill: grad, comp_op: :color_burn) 
-         
+
+          polygon(shape, fill: grad, comp_op: :color_burn)
+
           shadow_path(path, 1.0, 1.0, w / 40.0, fill: random_color, resolution: 0.1)
-          
         end
       end
     end
   end
-
 
   noise.()
 end

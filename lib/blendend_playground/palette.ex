@@ -10,7 +10,7 @@ defmodule BlendendPlayground.Palette do
   Palettes are loaded from `priv/palettes/*.json` at startup.
   Each palette carries a `source` tag so the frontend can filter by source then scheme.
   Palette names and sources are strings; prefer calls like
-  `Palette.palette_by_name("VanGogh", "takamo")` or `Palette.palette_by_name("takamo.VanGogh")`.
+  `Palette.palette_by_name("VanGogh", "takawo")` or `Palette.palette_by_name("takawo.VanGogh")`.
   """
 
   alias BlendendPlayground.Palette.Scheme
