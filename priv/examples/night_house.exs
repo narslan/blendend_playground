@@ -15,7 +15,7 @@ defmodule BlendendPlayground.Demos.NightHouse do
       if bool do
         translate(w, 0)
         scale(-1, 1)
-      end
+      end       
 
       scl = rand_between(0.75, 1.25)
       scale(scl, 1)
@@ -84,7 +84,6 @@ defmodule BlendendPlayground.Demos.NightHouse do
       fill_path(p3, fill: grad3)
 
       # fascia 2
-      IO.inspect(palette)
       {h3, s3, v3} = Enum.at(palette, 2)
       {h4, s4, v4} = Enum.at(palette, 3)
 
@@ -103,8 +102,8 @@ defmodule BlendendPlayground.Demos.NightHouse do
           line_to(0, h)
           close()
         end
-
-      fill_path(p4, fill: grad4, comp_op: :color_burn)
+   
+      fill_path(p4, fill: grad4)
 
       {h5, s5, v5} = Enum.at(palette, -2)
       x_translate_amount = if :rand.uniform() > 0.5, do: 0, else: w / 2
@@ -188,7 +187,7 @@ draw width, height do
 
   w = height / 10 / 1.5
   h = height * 2
-  noise_scale = 0.1
+  noise_scale = 0.01
 
   palette =
     Palette.fetch_random_palette("artists")
