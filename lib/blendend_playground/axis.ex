@@ -57,7 +57,8 @@ defmodule BlendendPlayground.Axis do
     * `:tick_format` - `(value -> iodata)` formatter for tick labels (default: auto).
       This is useful for custom precision or units, for example:
 
-          fn value -> :io_lib.format("~.2f s", [value]) end
+          fn value -> :io_lib.format(~c"~.2f s", [value]) end
+          fn value -> :io_lib.format(~c"~B", [round(value)]) end
 
       The return value is converted with `IO.iodata_to_binary/1`.
     * `:band_align` - `:start | :center | :end` for band scales (default: `:center`).
@@ -364,7 +365,7 @@ defmodule BlendendPlayground.Axis do
     if near_integer?(value) do
       value |> round() |> Integer.to_string()
     else
-      :io_lib.format("~.4f", [value])
+      :io_lib.format(~c"~.4f", [value])
       |> IO.iodata_to_binary()
       |> trim_trailing_zeros()
     end
