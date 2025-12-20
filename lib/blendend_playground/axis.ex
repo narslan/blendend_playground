@@ -387,43 +387,21 @@ defmodule BlendendPlayground.Axis do
           _ -> x
         end
 
-      :error ->
+      {:error, _reason} ->
         x
     end
   end
 
-  defp safe_text_advance({:ok, font}, label), do: safe_text_advance(font, label)
-  defp safe_text_advance(_font, label) when not is_binary(label), do: :error
-  defp safe_text_advance(font, _label) when not is_reference(font), do: :error
-
   defp safe_text_advance(font, label) do
-    with {:ok, gb} <- new_glyph_buffer(),
-         :ok <- set_glyph_text(gb, label),
+    with {:ok, gb} <- Blendend.Text.GlyphBuffer.new(),
+         :ok <- Blendend.Text.GlyphBuffer.set_utf8_text(gb, label),
          {:ok, %{"advance_x" => w}} <- Blendend.Text.Font.get_text_metrics(font, gb),
          true <- is_number(w) do
       {:ok, w}
     else
-      _ -> :error
-    end
-  rescue
-    ArgumentError -> :error
-  catch
-    _, _ -> :error
-  end
-
-  defp new_glyph_buffer do
-    case Blendend.Text.GlyphBuffer.new() do
-      {:ok, gb} -> {:ok, gb}
-      {:error, _} = error -> error
-      gb -> {:ok, gb}
-    end
-  end
-
-  defp set_glyph_text(gb, label) do
-    case Blendend.Text.GlyphBuffer.set_utf8_text(gb, label) do
-      :ok -> :ok
-      {:error, _} = error -> error
-      other -> other
+      {:error, reason} -> {:error, reason}
+      false -> {:error, :invalid_advance}
+      other -> {:error, other}
     end
   end
 
