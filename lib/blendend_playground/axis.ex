@@ -4,6 +4,42 @@ defmodule BlendendPlayground.Axis do
 
   This module focuses on visual experimentation. It supports numeric scales
   (linear) and band scales (categorical) by mapping ticks to the scale range.
+
+  ## Example
+
+      alias BlendendPlayground.Axis
+      use Blendend.Draw
+
+      w = 900
+      h = 600
+      margin = %{left: 80, right: 40, top: 50, bottom: 70}
+      plot_x0 = margin.left
+      plot_x1 = w - margin.right
+      plot_y0 = margin.top
+      plot_y1 = h - margin.bottom
+
+      draw w, h do
+        clear(fill: rgb(248, 248, 248))
+        title_font = load_font("priv/fonts/AlegreyaSans-Regular.otf", 26.0)
+        axis_font = load_font("priv/fonts/MapleMono-Regular.otf", 12.0)
+
+        text(title_font, 24, 36, "Axis playground", fill: rgb(30, 30, 40))
+
+        x_scale = Scale.Linear.new(domain: [0, 10], range: [plot_x0, plot_x1])
+        y_scale = Scale.Linear.new(domain: [-1, 1], range: [plot_y1, plot_y0])
+
+        Axis.draw(x_scale, :bottom, at: plot_y1, font: axis_font, tick_count: 8)
+        Axis.draw(y_scale, :left, at: plot_x0, font: axis_font, tick_count: 8)
+
+        points =
+          for i <- 0..200 do
+            x = 10.0 * i / 200
+            y = :math.sin(x)
+            {Scale.map(x_scale, x), Scale.map(y_scale, y)}
+          end
+
+        polyline(points, stroke: rgb(6, 53, 115, 200), stroke_width: 3.0)
+      end
   """
 
   alias Blendend.Draw
@@ -18,7 +54,12 @@ defmodule BlendendPlayground.Axis do
 
     * `:tick_values` - explicit list of tick values (default: inferred from domain).
     * `:tick_count` - desired tick count for numeric domains (default: `5`).
-    * `:tick_format` - `(value -> iodata)` formatter (default: auto).
+    * `:tick_format` - `(value -> iodata)` formatter for tick labels (default: auto).
+      This is useful for custom precision or units, for example:
+
+          fn value -> :io_lib.format("~.2f s", [value]) end
+
+      The return value is converted with `IO.iodata_to_binary/1`.
     * `:band_align` - `:start | :center | :end` for band scales (default: `:center`).
     * `:tick_offset` - numeric offset added to mapped positions (default: `0.0`).
   """
@@ -97,7 +138,15 @@ defmodule BlendendPlayground.Axis do
           Draw.line(r0, at, r1, at, stroke: axis_stroke, stroke_width: axis_width)
         end
 
-        draw_horizontal_ticks(ticks, at, tick_size, tick_padding, 1.0, show_ticks?, show_labels?, font,
+        draw_horizontal_ticks(
+          ticks,
+          at,
+          tick_size,
+          tick_padding,
+          1.0,
+          show_ticks?,
+          show_labels?,
+          font,
           tick_stroke,
           tick_width,
           label_fill,
@@ -111,7 +160,15 @@ defmodule BlendendPlayground.Axis do
           Draw.line(r0, at, r1, at, stroke: axis_stroke, stroke_width: axis_width)
         end
 
-        draw_horizontal_ticks(ticks, at, tick_size, tick_padding, -1.0, show_ticks?, show_labels?, font,
+        draw_horizontal_ticks(
+          ticks,
+          at,
+          tick_size,
+          tick_padding,
+          -1.0,
+          show_ticks?,
+          show_labels?,
+          font,
           tick_stroke,
           tick_width,
           label_fill,
@@ -125,7 +182,15 @@ defmodule BlendendPlayground.Axis do
           Draw.line(at, r0, at, r1, stroke: axis_stroke, stroke_width: axis_width)
         end
 
-        draw_vertical_ticks(ticks, at, tick_size, tick_padding, -1.0, show_ticks?, show_labels?, font,
+        draw_vertical_ticks(
+          ticks,
+          at,
+          tick_size,
+          tick_padding,
+          -1.0,
+          show_ticks?,
+          show_labels?,
+          font,
           tick_stroke,
           tick_width,
           label_fill,
@@ -139,7 +204,15 @@ defmodule BlendendPlayground.Axis do
           Draw.line(at, r0, at, r1, stroke: axis_stroke, stroke_width: axis_width)
         end
 
-        draw_vertical_ticks(ticks, at, tick_size, tick_padding, 1.0, show_ticks?, show_labels?, font,
+        draw_vertical_ticks(
+          ticks,
+          at,
+          tick_size,
+          tick_padding,
+          1.0,
+          show_ticks?,
+          show_labels?,
+          font,
           tick_stroke,
           tick_width,
           label_fill,
@@ -153,7 +226,8 @@ defmodule BlendendPlayground.Axis do
   end
 
   def draw(_scale, orientation, _opts) do
-    raise ArgumentError, "axis orientation must be :bottom | :top | :left | :right, got: #{inspect(orientation)}"
+    raise ArgumentError,
+          "axis orientation must be :bottom | :top | :left | :right, got: #{inspect(orientation)}"
   end
 
   defp draw_horizontal_ticks(
@@ -271,9 +345,14 @@ defmodule BlendendPlayground.Axis do
 
   defp tick_formatter(opts) do
     case Keyword.get(opts, :tick_format) do
-      fun when is_function(fun, 1) -> fun
-      nil -> &default_format/1
-      other -> raise ArgumentError, ":tick_format must be a 1-arity function, got: #{inspect(other)}"
+      fun when is_function(fun, 1) ->
+        fun
+
+      nil ->
+        &default_format/1
+
+      other ->
+        raise ArgumentError, ":tick_format must be a 1-arity function, got: #{inspect(other)}"
     end
   end
 
